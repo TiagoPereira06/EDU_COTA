@@ -6,7 +6,7 @@ const app = express()
 
 app.use(express.json())
 
-app.get('/series/popular', seriesApi.getPopularSeries)
+app.get('/series/popular/:page', seriesApi.getPopularSeries)
 app.get('/series/:seriesName', seriesApi.getSeriesWithName)
 app.post('/groups', seriesApi.createGroup)
 app.put('/groups/:groupName', seriesApi.updateGroup)

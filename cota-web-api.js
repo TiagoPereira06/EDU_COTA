@@ -14,7 +14,7 @@ module.exports = {
 
 
 function getPopularSeries(req, rsp) {
-    seriesService.getPopularSeries(processGetPopularSeries)
+    seriesService.getPopularSeries(processGetPopularSeries,req.params.page)
 
     function processGetPopularSeries(err, popularSeriesObj) {
         rsp.statusCode = 200

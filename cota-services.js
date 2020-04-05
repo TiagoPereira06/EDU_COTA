@@ -1,8 +1,8 @@
 const api = require('./movie-database-data')
 const db = require('./cota-db.js')
 
-function getPopularSeries(processGetPopularSeries) {
-    api.getPopularSeries(processGetPopularSeries)
+function getPopularSeries(processGetPopularSeries,page) {
+    api.getPopularSeries(processGetPopularSeries,page)
 }
 
 function getSeriesWithId(seriesName, processGetSeriesWithId) {
