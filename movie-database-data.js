@@ -14,19 +14,23 @@ function getPopularSeries(processGetPopularSeries,page) {
     request.get(options, (err, res, body) => {
         if(err == null) {
             popularSeriesObj = JSON.parse(body)
-            var series = []
-           /* for (var prop in popularSeriesObj) {
-               
-               console.log(popularSeriesObj.results["name"])
-                series.push(popularSeriesObj.results["name"])
-               
-              }
-*/
-            processGetPopularSeries(null, popularSeriesObj.results) // All series and all properties
+            
+ 
+            processGetPopularSeries(null, popularSeriesObj.results.map(e => [{"name":e.original_name,}])) // All series name
             
         }
     });
 }
+/*
+function getSeriesWithName(processGetSeriesWithName){
+
+    const options = {
+        'method': 'GET',
+        'uri': `${API_URL_START}/3/tv/popular?api_key=${API_KEY}&language=${language}&page=${page}`,
+    }
+
+}
+*/
 
 module.exports = {
 
