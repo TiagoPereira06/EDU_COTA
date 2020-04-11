@@ -1,15 +1,15 @@
-const request = require('request')
+const request = require('request');
 
-const SERVER_HOST = "localhost"
-const SERVER_PORT = 8080
-const SERVER_URI = `http://${SERVER_HOST}/`
+const SERVER_HOST = "localhost";
+const SERVER_PORT = 8080;
+const SERVER_URI = `http://${SERVER_HOST}/`;
 
-const ES_HOST = "localhost"
-const ES_PORT = 9200
-const ES_URI = `http://${ES_HOST}:${ES_PORT}/`
+const ES_HOST = "localhost";
+const ES_PORT = 9200;
+const ES_URI = `http://${ES_HOST}:${ES_PORT}/`;
 
 
-const MOCHA_TIMEOUT = 10000000
+const MOCHA_TIMEOUT = 10000000;
 
 function requestServerOptions(method, path, body) {
     if(body != null)
@@ -18,7 +18,7 @@ function requestServerOptions(method, path, body) {
             'uri': `${SERVER_URI}${path}`,
             'body': body,
             'json': true
-        }
+        };
     else
         return {
             'method': method,
@@ -43,7 +43,7 @@ function refresh(beforeOrAfter) {
             'method': 'POST',
             'uri': `${ES_URI}groups/_refresh`,
             'json': true
-        }
+        };
         request.post(options, (err, res, body) => {
             done()
         })
@@ -55,7 +55,7 @@ function post(options, beforeOrAfter) {
         request.post(options, (err, res, body) => {
             done()
         })
-    })
+    });
 
     refresh(beforeOrAfter)
 }
@@ -65,7 +65,7 @@ function put(options, beforeOrAfter) {
         request.put(options, (err, res, body) => {
             done()
         })
-    })
+    });
 
     refresh(beforeOrAfter)
 }
@@ -75,7 +75,7 @@ function del(options, beforeOrAfter) {
         request.delete(options, (err, res, body) => {
             done()
         })
-    })
+    });
 
     refresh(beforeOrAfter)
 }
@@ -85,11 +85,11 @@ function getErrObj(code, message = "Service Unavailable") {
         case 503: return {
             'statusCode': 503,
             'body': {"status": message}
-        }
+        };
         case 409: return {
             'statusCode': 409,
             'body': {"status": message}
-        }
+        };
         case 404: return {
             'statusCode': 404,
             'body': {"status": message}
@@ -107,4 +107,4 @@ module.exports = {
     getErrObj: getErrObj,
     SERVER_PORT: SERVER_PORT,
     MOCHA_TIMEOUT: MOCHA_TIMEOUT,
-}
+};

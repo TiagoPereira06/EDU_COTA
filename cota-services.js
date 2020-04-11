@@ -1,5 +1,5 @@
-const api = require('./movie-database-data')
-const db = require('./cota-db.js')
+const api = require('./movie-database-data');
+const db = require('./cota-db.js');
 
 function getPopularSeries(processGetPopularSeries,page) {
     api.getPopularSeries(processGetPopularSeries,page)
@@ -16,7 +16,7 @@ function getSeriesWithName(seriesName, processGetSeriesWithName) {
 
 function getGroups(processGetGroups) {
 
-    db.getGroups(cb)
+    db.getGroups(cb);
 
     function cb(err, groupsObj) {
         processGetGroups(err, groupsObj)
@@ -25,7 +25,7 @@ function getGroups(processGetGroups) {
 
 function getGroup(groupName, processGetGroup) {
     
-    db.getGroup(groupName, cb)
+    db.getGroup(groupName, cb);
 
     function cb(err, groupObj) {
         processGetGroup(err, groupObj)
@@ -34,7 +34,7 @@ function getGroup(groupName, processGetGroup) {
 
 function getSeriesBetweenInterval(groupName, min, max, processGetSeriesBetweenInterval) {
     
-    db.getSeriesBetweenInterval(groupName, min, max, cb)
+    db.getSeriesBetweenInterval(groupName, min, max, cb);
 
     function cb(err, gamesObj) {
         processGetSeriesBetweenInterval(err, gamesObj)
@@ -43,13 +43,13 @@ function getSeriesBetweenInterval(groupName, min, max, processGetSeriesBetweenIn
 }
 
 function createGroup(groupName, groupDesc, processCreateGroup) {
-    db.getGroup(groupName, processGetGroup)
+    db.getGroup(groupName, processGetGroup);
 
     function processGetGroup(err, groupObj) {
         if(!groupObj)
-            db.createGroup(groupName, groupDesc, cb)
+            db.createGroup(groupName, groupDesc, cb);
         else {
-            errorMessageObj = {"error": "Group already exists"}
+            errorMessageObj = {"error": "Group already exists"};
             processCreateGroup(err, errorMessageObj)
         }
     }
@@ -60,7 +60,7 @@ function createGroup(groupName, groupDesc, processCreateGroup) {
 }
 
 function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGroup) {
-    db.updateGroup(oldGroupName, newGroupName, newGroupDesc, cb)
+    db.updateGroup(oldGroupName, newGroupName, newGroupDesc, cb);
 
     function cb(err, updatedMessageObj) {
         processUpdateGroup(err, updatedMessageObj) // "updated"
@@ -68,11 +68,11 @@ function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGrou
 }
 
 function addSeriesToGroup(groupName, seriesObj, processAddSeriesToGroup) {
-    db.getGroup(groupName, processGetGroup)
+    db.getGroup(groupName, processGetGroup);
 
     function processGetGroup(err, groupObj) {
         if(!groupObj) {
-            errorMessageObj = {"error": "Group doesn't exist"}
+            errorMessageObj = {"error": "Group doesn't exist"};
             processAddSeriesToGroup(err, errorMessageObj)
         }
         else 
@@ -85,7 +85,7 @@ function addSeriesToGroup(groupName, seriesObj, processAddSeriesToGroup) {
 }
 
 function getIndexOfSeriesInGroup(groupName, seriesId, processGetIndexOfSeriesInGroup) {
-    db.getIndexOfSeriesInGroup(groupName, seriesId, cb)
+    db.getIndexOfSeriesInGroup(groupName, seriesId, cb);
 
     function cb(err, seriesIdx) {
         processGetIndexOfSeriesInGroup(err, seriesIdx)
@@ -93,7 +93,7 @@ function getIndexOfSeriesInGroup(groupName, seriesId, processGetIndexOfSeriesInG
 }
 
 function deleteSeriesFromGroup(groupName, seriesIdx, processDeleteSeriesFromGroup) {
-    db.deleteSeriesFromGroup(groupName, seriesIdx, cb)
+    db.deleteSeriesFromGroup(groupName, seriesIdx, cb);
     
     function cb(err, deletedMessageObj) {
         processDeleteSeriesFromGroup(0, deletedMessageObj)
@@ -112,4 +112,4 @@ module.exports = {
     addSeriesToGroup: addSeriesToGroup,
     getIndexOfSeriesInGroup: getIndexOfSeriesInGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup
-}
+};
