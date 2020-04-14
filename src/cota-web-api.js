@@ -1,20 +1,20 @@
 const seriesService = require('./cota-services');
 
 module.exports = {
-    getPopularSeries: getPopularSeries,
-    getSeriesWithName: getSeriesWithName,
-    getGroups: getGroups,
-    getGroup: getGroup,
-    getSeriesBetweenInterval:  getSeriesBetweenInterval, 
+    getMostPopularSeries: getPopularSeries,
+    getSeriesByName: getSeriesWithName,
+    getAllGroups: getAllGroups,
+    getGroupByName: getGroupByName,
+    getSeriesBetweenInterval: getSeriesBetweenInterval,
     createGroup: createGroup,
     updateGroup: updateGroup,
     addSeriesToGroup: addSeriesToGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup
 };
 
-
+//TODO : Tratamento de Erros nas respostas!
 function getPopularSeries(req, rsp) {
-    seriesService.getPopularSeries(processGetPopularSeries,req.params.page);
+    seriesService.getPopularSeries(processGetPopularSeries, req.params.page);
 
     function processGetPopularSeries(err, popularSeriesObj) {
         rsp.statusCode = 200;
@@ -31,8 +31,8 @@ function getSeriesWithName(req, rsp) {
     }
 }
 
-function getGroups(req, rsp) {
-    seriesService.getGroups(processGetGroups);
+function getAllGroups(req, rsp) {
+    seriesService.getAllGroups(processGetGroups);
 
     function processGetGroups(err, groupsObj) {
         rsp.statusCode = 200;
@@ -40,18 +40,17 @@ function getGroups(req, rsp) {
     }
 }
 
-function getGroup(req, rsp) {
-    seriesService.getGroup(req.params.groupName, processGetGroup);
+function getGroupByName(req, rsp) {
+    seriesService.getGroupByName(req.params.groupName, processGetGroup);
 
     function processGetGroup(err, groupObj) {
 
         if (!groupObj) {
             groupObj = {"error": "No group found"};
             rsp.statusCode = 404
-        }
-        else
+        } else
             rsp.statusCode = 200;
-            
+
         rsp.end(JSON.stringify(groupObj))
     }
 }
@@ -67,7 +66,7 @@ function getSeriesBetweenInterval(req, rsp) {
 
 function createGroup(req, rsp) { //body
     seriesService.createGroup(req.body.name, req.body.desc, processCreateGroup);
-  
+
     function processCreateGroup(err, createdMessageObj) {
         rsp.statusCode = 201;
         rsp.end(JSON.stringify(createdMessageObj))
@@ -84,9 +83,9 @@ function updateGroup(req, rsp) {//params & body
 }
 
 function addSeriesToGroup(req, rsp) {
-    seriesService.getSeriesWithId(req.params.seriesId, processGetSeriesWithId);
+    seriesService.getSeriesWithName(req.params.seriesName, processGetSeriesWithName);
 
-    function processGetSeriesWithId(err, seriesObj) {
+    function processGetSeriesWithName(err, seriesObj) {
         seriesService.addSeriesToGroup(req.params.groupName, seriesObj[0], processAddSeriesToGroup)
     }
 
@@ -97,11 +96,7 @@ function addSeriesToGroup(req, rsp) {
 }
 
 function deleteSeriesFromGroup(req, rsp) {
-    seriesService.getIndexOfSeriesInGroup(req.params.groupName, req.params.seriesId, processGetIndexOfSeriesInGroup);
-
-    function processGetIndexOfSeriesInGroup(err, seriesIdx) {
-        seriesService.deleteSeriesFromGroup(req.params.groupName, seriesIdx, processDeleteSeriesFromGroup)
-    }
+    seriesService.deleteSeriesFromGroup(req.params.groupName, req.params.seriesName, processDeleteSeriesFromGroup)
 
     function processDeleteSeriesFromGroup(err, deletedMessageObj) {
         rsp.statusCode = 200;

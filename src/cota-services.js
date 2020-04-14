@@ -1,8 +1,8 @@
 const api = require('./movie-database-data');
 const db = require('./cota-db.js');
 
-function getPopularSeries(processGetPopularSeries,page) {
-    api.getPopularSeries(processGetPopularSeries,page)
+function getPopularSeries(processGetPopularSeries, page) {
+    api.getPopularSeries(processGetPopularSeries, page)
 }
 
 function getSeriesWithId(seriesName, processGetSeriesWithId) {
@@ -14,7 +14,7 @@ function getSeriesWithName(seriesName, processGetSeriesWithName) {
     api.getSeriesWithName(seriesName, processGetSeriesWithName)
 }
 
-function getGroups(processGetGroups) {
+function getAllGroups(processGetGroups) {
 
     db.getGroups(cb);
 
@@ -23,9 +23,9 @@ function getGroups(processGetGroups) {
     }
 }
 
-function getGroup(groupName, processGetGroup) {
-    
-    db.getGroup(groupName, cb);
+function getGroupByName(groupName, processGetGroup) {
+
+    db.getGroupByName(groupName, cb);
 
     function cb(err, groupObj) {
         processGetGroup(err, groupObj)
@@ -33,40 +33,41 @@ function getGroup(groupName, processGetGroup) {
 }
 
 function getSeriesBetweenInterval(groupName, min, max, processGetSeriesBetweenInterval) {
-    
     db.getSeriesBetweenInterval(groupName, min, max, cb);
-
     function cb(err, gamesObj) {
         processGetSeriesBetweenInterval(err, gamesObj)
     }
-    
+
 }
 
 function createGroup(groupName, groupDesc, processCreateGroup) {
-    //TODO, verificar se já existe grupo com o mesmo nome
-
-    /* db.getGroup(groupName, processGetGroup);
+    db.getGroupByName(groupName, processGetGroup);
 
     function processGetGroup(err, groupObj) {
-        if(!groupObj)
+        if (!groupObj.length) {
             db.createGroup(groupName, groupDesc, cb);
-        else {
+        } else {
             errorMessageObj = {"error": "Group already exists"};
             processCreateGroup(err, errorMessageObj)
         }
     }
-    */
 
-  db.createGroup(groupName, groupDesc, cb);
     function cb(err, createdMessageObj) {
         processCreateGroup(err, createdMessageObj) // "created"
     }
-
-
 }
 
 function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGroup) {
-    db.updateGroup(oldGroupName, newGroupName, newGroupDesc, cb);
+    db.getGroupByName(newGroupName, processGetGroup);
+
+    function processGetGroup(err, groupObj) {
+        if (!groupObj.length) {
+            db.updateGroup(oldGroupName, newGroupName, newGroupDesc, cb);
+        } else {
+            errorMessageObj = {"error": "Group already exists"};
+            processUpdateGroup(err, errorMessageObj)
+        }
+    }
 
     function cb(err, updatedMessageObj) {
         processUpdateGroup(err, updatedMessageObj) // "updated"
@@ -74,14 +75,13 @@ function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGrou
 }
 
 function addSeriesToGroup(groupName, seriesObj, processAddSeriesToGroup) {
-    db.getGroup(groupName, processGetGroup);
+    db.getGroupByName(groupName, processGetGroup);
 
     function processGetGroup(err, groupObj) {
-        if(!groupObj) {
+        if (!groupObj.length) {
             errorMessageObj = {"error": "Group doesn't exist"};
             processAddSeriesToGroup(err, errorMessageObj)
-        }
-        else 
+        } else
             db.addSeriesToGroup(groupName, seriesObj, cb)
     }
 
@@ -90,32 +90,36 @@ function addSeriesToGroup(groupName, seriesObj, processAddSeriesToGroup) {
     }
 }
 
-function getIndexOfSeriesInGroup(groupName, seriesId, processGetIndexOfSeriesInGroup) {
-    db.getIndexOfSeriesInGroup(groupName, seriesId, cb);
 
-    function cb(err, seriesIdx) {
-        processGetIndexOfSeriesInGroup(err, seriesIdx)
+function deleteSeriesFromGroup(groupName, seriesName, processDeleteSeriesFromGroup) {
+    db.getGroupByName(groupName, processGetGroup);
+
+    function processGetGroup(err, groupObj) {
+        if (!groupObj.length) {
+            errorMessageObj = {"error": "Group doesn't exist"};
+            processDeleteSeriesFromGroup(err, errorMessageObj)
+        } else
+            db.deleteSeriesFromGroup(groupName, seriesName, cb);
     }
-}
 
-function deleteSeriesFromGroup(groupName, seriesIdx, processDeleteSeriesFromGroup) {
-    db.deleteSeriesFromGroup(groupName, seriesIdx, cb);
-    
+
+
     function cb(err, deletedMessageObj) {
         processDeleteSeriesFromGroup(0, deletedMessageObj)
     }
 }
 
+
+
 module.exports = {
     getPopularSeries: getPopularSeries,
     getSeriesWithId: getSeriesWithId,
     getSeriesWithName: getSeriesWithName,
-    getGroups: getGroups,
-    getGroup: getGroup,
-    getSeriesBetweeninterval: getSeriesBetweenInterval,
+    getAllGroups: getAllGroups,
+    getGroupByName: getGroupByName,
+    getSeriesBetweenInterval: getSeriesBetweenInterval,
     createGroup: createGroup,
     updateGroup: updateGroup,
     addSeriesToGroup: addSeriesToGroup,
-    getIndexOfSeriesInGroup: getIndexOfSeriesInGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup
 };

@@ -6,12 +6,13 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/series/popular/:page', seriesApi.getPopularSeries);
-app.get('/series/:seriesName', seriesApi.getSeriesWithName);
-app.post('/groups', seriesApi.createGroup);
+app.get('/series/popular/:page', seriesApi.getMostPopularSeries);
+app.get('/series/:seriesName', seriesApi.getSeriesByName);
+
 app.put('/groups/:groupName', seriesApi.updateGroup);
-app.get('/groups', seriesApi.getGroups);
-app.get('/groups/:groupName', seriesApi.getGroup); //get details
+app.post('/groups', seriesApi.createGroup);
+app.get('/groups', seriesApi.getAllGroups);
+app.get('/groups/:groupName', seriesApi.getGroupByName); //get details
 app.put('/groups/:groupName/series/:seriesName', seriesApi.addSeriesToGroup);
 app.delete('/groups/:groupName/series/:seriesName', seriesApi.deleteSeriesFromGroup);
 //app.delete('/groups/:groupName', seriesApi.deleteGroup)

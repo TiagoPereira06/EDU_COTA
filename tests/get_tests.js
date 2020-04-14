@@ -1,6 +1,6 @@
 const request  = require('request');
 const assert = require('assert');
-const utils = require('./../cota-utils.js');
+const utils = require('../src/cota-utils.js');
 
 
 describe('GET Popular Series', function() {
