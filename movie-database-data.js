@@ -1,15 +1,11 @@
-const API_URL_START = "https://api.themoviedb.org";
-const API_KEY = '0c9b2502c13f4dcc2217113f2adf3788';
-const language= 'en-US';
-
-
+const util = require('./cota-utils.js')
 const request = require('request');
 
 function getPopularSeries(processGetPopularSeries,page) {
 
     const options = {
         'method': 'GET',
-        'uri': `${API_URL_START}/3/tv/popular?api_key=${API_KEY}&language=${language}&page=${page}`,
+        'uri': `${util.API_URL_START}/3/tv/popular?api_key=${util.API_KEY}&language=${util.language}&page=${page}`,
     };
     request.get(options, (err, res, body) => {
         if(err == null) {
@@ -25,7 +21,7 @@ function getSeriesWithId(id,processGetSeriesWithId){
 
     const options = {
         'method': 'GET',
-        'uri': `${API_URL_START}/3/tv/${id}?api_key=${API_KEY}&language=${language}`,
+        'uri': `${util.API_URL_START}/3/tv/${id}?api_key=${util.API_KEY}&language=${util.language}`,
     };
     request.get(options,(err,res,body) =>{
         if (err == null){
@@ -37,9 +33,26 @@ function getSeriesWithId(id,processGetSeriesWithId){
 
 }
 
+function getSeriesWithName(name,processGetSeriesWithName){
+    const options = {
+        'method': 'GET',
+        'uri': `${util.API_URL_START}/3/search/tv/?api_key=${util.API_KEY}&language=${util.language}&query=${name}`,
+    };
+    request.get(options,(err,res,body) =>{
+        if (err == null){
+            seriesDetails= JSON.parse(body)
+            processGetSeriesWithName(null,seriesDetails.results)
+
+        }
+    })
+
+}
+
+
 
 module.exports = {
 
-   getPopularSeries: getPopularSeries,
-   getSeriesWithId: getSeriesWithId
+    getPopularSeries: getPopularSeries,
+    getSeriesWithId: getSeriesWithId,
+    getSeriesWithName:getSeriesWithName
 };

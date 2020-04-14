@@ -8,6 +8,9 @@ const ES_HOST = "localhost";
 const ES_PORT = 9200;
 const ES_URI = `http://${ES_HOST}:${ES_PORT}/`;
 
+const API_URL_START = "https://api.themoviedb.org";
+const API_KEY = '0c9b2502c13f4dcc2217113f2adf3788';
+const language= 'en-US';
 
 const MOCHA_TIMEOUT = 10000000;
 
@@ -107,4 +110,7 @@ module.exports = {
     getErrObj: getErrObj,
     SERVER_PORT: SERVER_PORT,
     MOCHA_TIMEOUT: MOCHA_TIMEOUT,
+    API_URL_START :API_URL_START,
+    API_KEY:API_KEY,
+    language : language
 };
