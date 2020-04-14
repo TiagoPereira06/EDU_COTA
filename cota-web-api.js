@@ -23,7 +23,7 @@ function getPopularSeries(req, rsp) {
 }
 
 function getSeriesWithName(req, rsp) {
-    seriesService.getSeriesWithName(req.params.seriesName, processGetSeriesWithName);
+    seriesService.getSeriesWithId(req.params.seriesName, processGetSeriesWithName);
 
     function processGetSeriesWithName(err, seriesObj) {
         rsp.statusCode = 200;

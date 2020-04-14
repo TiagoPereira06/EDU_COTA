@@ -20,18 +20,26 @@ function getPopularSeries(processGetPopularSeries,page) {
         }
     });
 }
-/*
-function getSeriesWithName(processGetSeriesWithName){
+
+function getSeriesWithId(id,processGetSeriesWithId){
 
     const options = {
         'method': 'GET',
-        'uri': `${API_URL_START}/3/tv/popular?api_key=${API_KEY}&language=${language}&page=${page}`,
-    }
+        'uri': `${API_URL_START}/3/tv/${id}?api_key=${API_KEY}&language=${language}`,
+    };
+    request.get(options,(err,res,body) =>{
+        if (err == null){
+            seriesDetails= JSON.parse(body)
+            processGetSeriesWithId(null,seriesDetails)
+
+        }
+    })
 
 }
-*/
+
 
 module.exports = {
 
-getPopularSeries: getPopularSeries
+   getPopularSeries: getPopularSeries,
+   getSeriesWithId: getSeriesWithId
 };
