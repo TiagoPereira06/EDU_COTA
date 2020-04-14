@@ -14,8 +14,7 @@ function getPopularSeries(processGetPopularSeries,page) {
     request.get(options, (err, res, body) => {
         if(err == null) {
             popularSeriesObj = JSON.parse(body);
-            
- 
+
             processGetPopularSeries(null, popularSeriesObj.results.map(e => [{"name":e.original_name,}])) // All series name
             
         }
