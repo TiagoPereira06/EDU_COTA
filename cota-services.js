@@ -43,7 +43,9 @@ function getSeriesBetweenInterval(groupName, min, max, processGetSeriesBetweenIn
 }
 
 function createGroup(groupName, groupDesc, processCreateGroup) {
- /*   db.getGroup(groupName, processGetGroup);
+    //TODO, verificar se já existe grupo com o mesmo nome
+
+    /* db.getGroup(groupName, processGetGroup);
 
     function processGetGroup(err, groupObj) {
         if(!groupObj)
@@ -53,11 +55,14 @@ function createGroup(groupName, groupDesc, processCreateGroup) {
             processCreateGroup(err, errorMessageObj)
         }
     }
-*/
+    */
+
   db.createGroup(groupName, groupDesc, cb);
     function cb(err, createdMessageObj) {
         processCreateGroup(err, createdMessageObj) // "created"
     }
+
+
 }
 
 function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGroup) {
