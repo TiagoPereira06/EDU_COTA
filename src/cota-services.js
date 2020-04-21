@@ -33,9 +33,13 @@ function getGroupByName(groupName, processGetGroup) {
 }
 
 function getSeriesBetweenInterval(groupName, min, max, processGetSeriesBetweenInterval) {
-    db.getSeriesBetweenInterval(groupName, min, max, cb);
-    function cb(err, gamesObj) {
-        processGetSeriesBetweenInterval(err, gamesObj)
+    if(min >=2 && max <= 10) db.getSeriesBetweenInterval(groupName,min,max,cb)
+    else{
+        let errormessageObj= {"error" :" Interval is not within a possible range"}
+        cb(null,errormessageObj)
+    }
+    function cb(err, seriesObj) {
+        processGetSeriesBetweenInterval(err, seriesObj)
     }
 
 }

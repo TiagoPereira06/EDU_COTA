@@ -3,15 +3,20 @@ const assert = require('assert');
 const utils = require('../src/cota-utils.js');
 
 
-describe('GET Popular Series', function() {
-    this.timeout(utils.MOCHA_TIMEOUT);
+const optionsCreateGroupA = utils.requestServerOptions('POST', 'groups', {
+    name: "A",
+    desc: "Grupo de testes A"
+})
 
-    const options = utils.requestServerOptions('GET', 'series/popular', null);
-    it('Should return series with the status code \'200 OK\'', function(done) {
+describe('GET Specific Series', function() {
+    this.timeout(utils.MOCHA_TIMEOUT)
+
+    const options = utils.requestServerOptions('GET', 'series/Homeland', null)
+    it('Should return Homeland with the status code \'200 OK\'', function(done) {
         request.get(options, (err, res, body) => {
-            series = body;
-            assert.equal(series.length, 30);
-            assert.equal(res.statusCode, 200);
+            series = JSON.parse(body)
+            assert.equal(series.results.name, "Homeland")
+            assert.equal(res.statusCode, 200)
             done()
         })
     });

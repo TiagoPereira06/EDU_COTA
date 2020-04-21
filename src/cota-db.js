@@ -44,6 +44,12 @@ function deleteSeriesFromGroup(groupName, seriesName, processDeleteSeriesFromGro
     console.log("\"Group edited ----> " + groupName + " deleted " + seriesName + " series !");
     return processDeleteSeriesFromGroup(null ,console.log("SUCCESS !"))
 }
+function getSeriesBetweenInterval(groupName, min, max, processgetSeriesBetweenInterval){
+    let groupIndex = Groups_Database.findIndex(group => group.name === groupName)
+    let seriesArray = Groups_Database[groupIndex].series
+    let finalarray = seriesArray.filter(series => series.vote_average >= min && series.vote_average <= max)
+    return processgetSeriesBetweenInterval(null,finalarray)
+}
 
 module.exports = {
     createGroup: createGroup,
@@ -51,7 +57,8 @@ module.exports = {
     getGroups: getGroups,
     updateGroup: updateGroup,
     addSeriesToGroup: addSeriesToGroup,
-    deleteSeriesFromGroup : deleteSeriesFromGroup
+    deleteSeriesFromGroup : deleteSeriesFromGroup,
+    getSeriesBetweenInterval: getSeriesBetweenInterval
     }
 
 
