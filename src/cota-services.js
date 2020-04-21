@@ -57,7 +57,7 @@ function createGroup(groupName, groupDesc, processCreateGroup) {
     }
 
     function cb(err, createdMessageObj) {
-        processCreateGroup(err, createdMessageObj) // "created"
+        processCreateGroup(err, "Group created successfully")
     }
 }
 
@@ -74,7 +74,7 @@ function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGrou
     }
 
     function cb(err, updatedMessageObj) {
-        processUpdateGroup(err, updatedMessageObj) // "updated"
+        processUpdateGroup(err, "Group with name" + oldGroupName +" was updated")
     }
 }
 

@@ -59,8 +59,14 @@ function getSeriesBetweenInterval(req, rsp) {
     seriesService.getSeriesBetweenInterval(req.params.groupName, req.params.min, req.params.max, processGetSeriesBetweenInterval);
 
     function processGetSeriesBetweenInterval(err, seriesObj) {
-        rsp.statusCode = 200;
-        rsp.end(JSON.stringify(seriesObj))
+        if(req.params.min< 2 ||req.params.max >10 ){
+            rsp.statusCode= 400
+            rsp.end(JSON.stringify(seriesObj))
+        }
+        else {
+            rsp.statusCode = 200;
+            rsp.end(JSON.stringify(seriesObj))
+        }
     }
 }
 
