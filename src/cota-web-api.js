@@ -12,7 +12,6 @@ module.exports = {
     deleteSeriesFromGroup: deleteSeriesFromGroup
 };
 
-//TODO : Tratamento de Erros nas respostas!
 function getPopularSeries(req, rsp) {
     seriesService.getPopularSeries(processGetPopularSeries, req.params.page);
 

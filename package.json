@@ -1,0 +1,9 @@
+{
+  "name": "PI-1920v-LI51D-G10",
+  "version": "1.0.0",
+  "dependencies": {},
+  "devDependencies": {
+    "express": "^4.17.1",
+    "request": "^2.88.2"
+  }
+}
