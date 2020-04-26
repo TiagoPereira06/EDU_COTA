@@ -2,7 +2,7 @@ const request = require('request');
 
 const SERVER_HOST = "localhost";
 const SERVER_PORT = 8080;
-const SERVER_URI = `http://${SERVER_HOST}/`;
+const SERVER_URI = `http://${SERVER_HOST}:${SERVER_PORT}/`;
 
 const ES_HOST = "localhost";
 const ES_PORT = 9200;
