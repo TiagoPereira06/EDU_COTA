@@ -14,7 +14,6 @@ function createGroup(name, desc, processCreateGroup) {
 }
 
 function getGroupByName(name, processGetGroup) {
-    //TODO : RETORNAR COM ARRAY DE SERIES
     let group = Groups_Database.filter(e => e.name === name)
     return processGetGroup(null, group)
 }

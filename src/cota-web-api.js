@@ -73,7 +73,8 @@ function createGroup(req, rsp) { //body
     seriesService.createGroup(req.body.name, req.body.desc, processCreateGroup);
 
     function processCreateGroup(err, createdMessageObj) {
-        rsp.statusCode = 201;
+        if(createdMessageObj.error) rsp.statusCode = 403;
+            else rsp.statusCode = 201;
         rsp.end(JSON.stringify(createdMessageObj))
     }
 }
