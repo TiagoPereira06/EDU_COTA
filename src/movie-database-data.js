@@ -1,9 +1,25 @@
 const util = require('./cota-utils.js')
 const request = require('request');
+const fetch = require ('node-fetch')
+const {getErrObj} = require("./cota-utils");
 
-function getPopularSeries(processGetPopularSeries, page) {
+function getPopularSeries(page) {
+            return fetch('${util.API_URL_START}/3/tv/popular?api_key=${util.API_KEY}&language=${util.language}&page=${page}')
+            .then(response => response.json())
 
-    const options = {
+    }
+
+
+
+
+
+
+
+
+
+
+
+   /* const options = {
         'method': 'GET',
         'uri': `${util.API_URL_START}/3/tv/popular?api_key=${util.API_KEY}&language=${util.language}&page=${page}`,
     };
@@ -15,7 +31,9 @@ function getPopularSeries(processGetPopularSeries, page) {
 
         }
     });
-}
+
+    */
+
 
 function getSeriesWithId(id, processGetSeriesWithId) {
 
