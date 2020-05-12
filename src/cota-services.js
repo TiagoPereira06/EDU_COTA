@@ -2,16 +2,16 @@ const Webapi = require('./movie-database-data');
 const db = require('./cota-db.js');
 
 function getPopularSeries(page) {
-    Webapi.getPopularSeries(page)
+    return Webapi.getPopularSeries(page)
 }
 
 function getSeriesWithId(seriesName, processGetSeriesWithId) {
-    Webapi.getSeriesWithId(seriesName, processGetSeriesWithId)
+   return Webapi.getSeriesWithId(seriesName, processGetSeriesWithId)
 }
 
 
 function getSeriesWithName(seriesName, processGetSeriesWithName) {
-    Webapi.getSeriesWithName(seriesName, processGetSeriesWithName)
+    return Webapi.getSeriesWithName(seriesName, processGetSeriesWithName)
 }
 
 function getAllGroups() {

@@ -4,19 +4,17 @@ const fetch = require ('node-fetch')
 const {getErrObj} = require("./cota-utils");
 
 function getPopularSeries(page) {
-            return fetch('${util.API_URL_START}/3/tv/popular?api_key=${util.API_KEY}&language=${util.language}&page=${page}')
+       return new Promise (function(resolve,reject){
+        const fetchPromise = fetch('https://api.themoviedb.org/3/tv/popular?api_key=0c9b2502c13f4dcc2217113f2adf3788&language=en-US&page='+page)
+        if(fetchPromise === null) reject(getErrObj(404))
+        resolve(
+            fetchPromise
             .then(response => response.json())
+            .then(respJson => respJson.results.map(e => [{"name": e.original_name}]) )
+            )
 
-    }
-
-
-
-
-
-
-
-
-
+       })
+}
 
 
    /* const options = {
