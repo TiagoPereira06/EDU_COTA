@@ -1,41 +1,52 @@
 const utils = require('./cota-utils');
+const {getErrObj} = require("./cota-utils");
+const fetch = require ('node-fetch')
 
-const baseUrl = `http://${utils.ES_HOST}:${utils.ES_PORT}`;
+const baseUrl =utils.ES_URI;
 
 function getGroupByName(groupName) {
-    return new Promise((resolve, reject) => {
-        const fetchPromise = fetch(`${baseUrl}/groups/_search`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "size": 1,
-                "query": {
-                    "match": {
-                        "name": groupName
+    return new Promise(function(resolve,reject) {
+        const options = {
+            'method': 'GET',
+            'json': true,
+            'body': {
+                'size': 1,
+                'query' : {
+                    'match': {
+                        'name': groupName
                     }
                 }
-            })
+            }
+        };
+            const fetchPromise = fetch (`${baseUrl}/groups/_search`,options)
+            if(fetchPromise === null) reject(getErrObj(404))
+            resolve(
+                fetchPromise
+                    .then(response => response.json())
+                    .then(body => body.hits.hits[0]._source)
+                    .catch(err => {console.log(err)})
+                    
+            )
+    
         })
-    })
 }
 
 function createGroup(name, desc) {
     return new Promise((resolve, reject) => {
         const fetchPromise = fetch(`${baseUrl}/groups/_doc`, {
             method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+            body:{
                 "name": name,
                 "desc": desc,
                 "series": []
-            })
+            }
         })
-        /*if (fetchPromise === null) reject(utils.getErrObj(404))
-        resolve({"status": "Group Created!"})*/
+        resolve(
+            fetchPromise
+            .then(response => response.json())
+            .then(response =>{return {"status": "Group Created!"} })
+            .catch(err => {console.log(" *****" + err)})
+            )
     })
 }
 

@@ -1,6 +1,6 @@
 const webapi = require('./movie-database-data');
 const db = require('./cota-db.js');
-
+const {getErrObj} = require("./cota-utils");
 function getPopularSeries(page) {
     return webapi.getPopularSeries(page)
 }
@@ -35,27 +35,34 @@ function getSeriesBetweenInterval(groupName, min, max, processGetSeriesBetweenIn
 }
 
 function createGroup(groupName, groupDesc) {
+    
     return db.getGroupByName(groupName)
         .then(groupObj => {
-            if(groupObj) return Promise.reject(utils.getErrObj(409,"Group already exists"))
+            if(groupObj) return Promise.reject(getErrObj(409,"Group already exists"))
         })
         .catch(err => {
+            console.log(err)
             if (err.statusCode === 404)
                 return db.createGroup(groupName,groupDesc)
             return Promise.reject(err)
         })
 }
 
-function updateGroup(oldGroupName, newGroupName, newGroupDesc) {
-    return db.getGroupByName(newGroupName)
-        .then(groupObj => {
-            if(groupObj) return db.updateGroup(oldGroupName, newGroupName, newGroupDesc)
-        })
-        .catch(function(err) {
-            if (err.statusCode === 404)
-                return Promise.reject(utils.getErrObj(404, "Group does not exist"))
-            return Promise.reject(err)
-        })
+function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGroup) {
+    db.getGroupByName(newGroupName, processGetGroup);
+
+    function processGetGroup(err, groupObj) {
+        if (!groupObj.length) {
+            db.updateGroup(oldGroupName, newGroupName, newGroupDesc, cb);
+        } else {
+            errorMessageObj = {"error": "Group already exists"};
+            processUpdateGroup(err, errorMessageObj)
+        }
+    }
+
+    function cb(err) {
+        processUpdateGroup(err, "Group with name" + oldGroupName +" was updated")
+    }
 }
 
 function addSeriesToGroup(groupName, seriesObj, processAddSeriesToGroup) {

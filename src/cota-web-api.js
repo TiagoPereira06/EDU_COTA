@@ -15,6 +15,7 @@ module.exports = {
 function getPopularSeries(req, rsp) {
      seriesService.getPopularSeries(req.params.page)
         .then(function(popularSeriesObj) {
+            console.log(popularSeriesObj)
             rsp.statusCode = 200
             rsp.json(popularSeriesObj)
          })
@@ -26,9 +27,9 @@ function getPopularSeries(req, rsp) {
 
 function getSeriesWithName(req, rsp) {
     seriesService.getSeriesWithName(req.params.seriesName)
-        .then(function (gamesObj) {
+        .then(function (seriesObj) {
             rsp.statusCode = 200
-            rsp.json(gamesObj)
+            rsp.json(seriesObj)
         })
         .catch(function (err) {
             rsp.statusCode= err.statusCode
@@ -108,13 +109,6 @@ function createGroup(req, rsp) { //body
             rsp.statusCode = err.statusCode
             rsp.json(err.body)
         })
-
- /*   function processCreateGroup(err, createdMessageObj) {
-        if(createdMessageObj.error) rsp.statusCode = 403;
-            else rsp.statusCode = 201;
-        rsp.end(JSON.stringify(createdMessageObj))
-    }
-    */
 
 }
 
