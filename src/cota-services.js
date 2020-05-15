@@ -15,11 +15,11 @@ function getSeriesWithName(seriesName) {
 }
 
 function getAllGroups() {
-    db.getGroups();
+    return db.getGroups();
 }
 
 function getGroupByName(groupName) {
-    db.getGroupByName(groupName);
+    return db.getGroupByName(groupName);
 }
 
 function getSeriesBetweenInterval(groupName, min, max, processGetSeriesBetweenInterval) {
@@ -46,21 +46,16 @@ function createGroup(groupName, groupDesc) {
         })
 }
 
-function updateGroup(oldGroupName, newGroupName, newGroupDesc, processUpdateGroup) {
-    db.getGroupByName(newGroupName, processGetGroup);
-
-    function processGetGroup(err, groupObj) {
-        if (!groupObj.length) {
-            db.updateGroup(oldGroupName, newGroupName, newGroupDesc, cb);
-        } else {
-            errorMessageObj = {"error": "Group already exists"};
-            processUpdateGroup(err, errorMessageObj)
-        }
-    }
-
-    function cb(err) {
-        processUpdateGroup(err, "Group with name" + oldGroupName +" was updated")
-    }
+function updateGroup(oldGroupName, newGroupName, newGroupDesc) {
+    return db.getGroupByName(newGroupName)
+        .then(groupObj => {
+            if(groupObj) return db.updateGroup(oldGroupName, newGroupName, newGroupDesc)
+        })
+        .catch(function(err) {
+            if (err.statusCode === 404)
+                return Promise.reject(utils.getErrObj(404, "Group does not exist"))
+            return Promise.reject(err)
+        })
 }
 
 function addSeriesToGroup(groupName, seriesObj, processAddSeriesToGroup) {

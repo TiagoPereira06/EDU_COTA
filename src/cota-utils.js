@@ -1,5 +1,3 @@
-const request = require('request');
-
 const SERVER_HOST = "localhost";
 const SERVER_PORT = 8080;
 const SERVER_URI = `http://${SERVER_HOST}:${SERVER_PORT}/`;
@@ -30,57 +28,12 @@ function requestServerOptions(method, path, body) {
         }
 }
 
-function requestDatabaseOptions(method, path, body) {
+function requestDatabaseOptions(method, body) {
     return {
         'method': method,
-        'uri': `${ES_URI}${path}`,
         'body': body,
         'json': true
     }
-}
-
-function refresh(beforeOrAfter) {
-    beforeOrAfter(function (done) {
-        // Replace 'groups' with parameter if more db indexes
-        options = {
-            'method': 'POST',
-            'uri': `${ES_URI}groups/_refresh`,
-            'json': true
-        };
-        request.post(options, (err, res, body) => {
-            done()
-        })
-    })
-}
-
-function post(options, beforeOrAfter) {
-    beforeOrAfter(function (done) {
-        request.post(options, (err, res, body) => {
-            done()
-        })
-    });
-
-    refresh(beforeOrAfter)
-}
-
-function put(options, beforeOrAfter) {
-    beforeOrAfter(function (done) {
-        request.put(options, (err, res, body) => {
-            done()
-        })
-    });
-
-    refresh(beforeOrAfter)
-}
-
-function del(options, beforeOrAfter) {
-    beforeOrAfter(function (done) {
-        request.delete(options, (err, res, body) => {
-            done()
-        })
-    });
-
-    refresh(beforeOrAfter)
 }
 
 function getErrObj(code, message = "Service Unavailable") {
@@ -106,12 +59,10 @@ function getErrObj(code, message = "Service Unavailable") {
 module.exports = {
     requestServerOptions: requestServerOptions,
     requestDatabaseOptions: requestDatabaseOptions,
-    refresh: refresh,
-    post: post,
-    put: put,
-    del: del,
     getErrObj: getErrObj,
     SERVER_PORT: SERVER_PORT,
+    ES_HOST: ES_HOST,
+    ES_PORT: ES_PORT,
     MOCHA_TIMEOUT: MOCHA_TIMEOUT,
     API_URL_START: API_URL_START,
     API_KEY: API_KEY,
