@@ -11,7 +11,7 @@ function createGroup(name, desc, processCreateGroup) {
  
 }
 
-function getGroupByName(name, processGetGroup) {
+function getGroupByName(name) {
 
 }
 
