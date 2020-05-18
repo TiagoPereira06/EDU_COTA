@@ -14,7 +14,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": ""
+							"raw": "localhost:8080/series/popular/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"series",
+								"popular",
+								"1"
+							]
 						}
 					},
 					"response": []
@@ -25,7 +34,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": ""
+							"raw": "localhost:8080/series/Homeland",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"series",
+								"Homeland"
+							]
 						}
 					},
 					"response": []
@@ -35,8 +52,26 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"series\": \"House\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": ""
+							"raw": "localhost:8080/groups/Tiago/series",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"groups",
+								"Tiago",
+								"series"
+							]
 						}
 					},
 					"response": []
@@ -47,16 +82,16 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/groups/Adelaide/series/Siren",
+							"raw": "localhost:8080/groups/Tiago/series/House",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"groups",
-								"Adelaide",
+								"Tiago",
 								"series",
-								"Siren"
+								"House"
 							]
 						}
 					},
@@ -68,7 +103,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": ""
+							"raw": "localhost:8080/groups/Tiago/series/6&7",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"groups",
+								"Tiago",
+								"series",
+								"6&7"
+							]
 						}
 					},
 					"response": []
@@ -114,7 +159,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Marcio\",\n\t\"desc\" : \"descricao muito bom\"\n}",
+							"raw": "{\n\t\"name\" : \"Andreia\",\n\t\"desc\" : \"descricao muito bom\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -140,7 +185,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": ""
+							"raw": "localhost:8080/groups/Tiago",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"groups",
+								"Tiago"
+							]
 						}
 					},
 					"response": []
@@ -152,7 +205,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Marcio\",\n\t\"desc\" : \"descricao muito bom\"\n}",
+							"raw": "{\n\t\"name\" : \"TiagoPostUpdate\",\n\t\"desc\" : \"descricao muito boa\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -160,14 +213,162 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/groups/Rui",
+							"raw": "localhost:8080/groups/Tiago",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"groups",
-								"Rui"
+								"Tiago"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "ElasticSearch",
+			"item": [
+				{
+					"name": "DELETE AllGroups",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"match_all\": {}\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9200/groups/_doc/_delete_by_query",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"groups",
+								"_doc",
+								"_delete_by_query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET AllGroup",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9200/groups/_search",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"groups",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET GroupByName",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9200/groups/_search?q=name:Tiago",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"groups",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "name:Tiago"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PostGroup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"name\": \"Tiago\",\r\n\t\"desc\": \"descricao muito boa\",\r\n\t\"series\": []\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9200/groups/_doc",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"groups",
+								"_doc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateGroup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"query\": {\r\n\t\t\"match\": {\r\n\t\t\t\"name\": \"Tiago\"\r\n\t\t}\r\n\t},\r\n\"script\": {\r\n                \"source\": \"ctx._source.name = params.name; ctx._source.desc = params.desc\",\r\n                \"params\":{\r\n                    \"name\" : \"TiagoPostUpdate\",\r\n                    \"desc\" : \"TiagoPostUpdate\"\r\n                }\r\n            }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:9200/groups/_doc/_update_by_query",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"groups",
+								"_doc",
+								"_update_by_query"
 							]
 						}
 					},

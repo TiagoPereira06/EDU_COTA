@@ -1,4 +1,97 @@
+'use strict';
 const seriesService = require('./cota-services');
+const respCodes = [];
+respCodes[seriesService.RESOURCE_FOUND_MSG] = 200;
+respCodes[seriesService.RESOURCE_NOT_FOUND_MSG] = 404;
+respCodes[seriesService.GROUP_CREATED_MSG] = 201;
+respCodes[seriesService.GROUP_CONFLICT_MSG] = 409;
+respCodes[seriesService.GROUP_UPDATED_MSG] = 200;
+respCodes[seriesService.DB_ERROR_MSG] = 500;
+respCodes[seriesService.API_ERROR_MSG] = 503;
+
+function getPopularSeries(req, rsp) {
+    delegateTask(
+        seriesService.getPopularSeries(req.params.page),
+        rsp
+    )
+}
+
+function getSeriesWithName(req, rsp) {
+    delegateTask(
+        seriesService.getSeriesWithName(req.params.seriesName),
+        rsp
+    )
+}
+
+function getAllGroups(req, rsp) {
+    delegateTask(
+        seriesService.getAllGroups(),
+        rsp
+    )
+}
+
+function getGroupByName(req, rsp) {
+    delegateTask(
+        seriesService.getGroupByName(req.params.groupName),
+        rsp
+    )
+}
+
+function createGroup(req, rsp) {
+    delegateTask(
+        seriesService.createGroup(req.body.name, req.body.desc),
+        rsp
+    )
+}
+
+
+function updateGroup(req, rsp) {
+    delegateTask(
+        seriesService.updateGroup(req.params.groupName, req.body.name, req.body.desc),
+        rsp
+    )
+}
+
+function addSeriesToGroup(req, rsp) {
+    delegateTask(
+        seriesService.addSeriesToGroup(req.params.groupName, req.body.series),
+        rsp
+    )
+}
+
+function deleteSeriesFromGroup(req, rsp) {
+    delegateTask(
+        seriesService.deleteSeriesFromGroup(req.params.groupName, req.params.seriesName),
+        rsp
+    )
+}
+
+function getSeriesBetweenInterval(req, rsp) {
+    delegateTask(
+        seriesService.getSeriesBetweenInterval(req.params.groupName, req.params.min, req.params.max),
+        rsp
+    )
+}
+
+function delegateTask(promise, rsp) {
+    promise
+        .then(result => {
+            successResponse(rsp, result)
+        })
+        .catch(err => {
+            errorResponse(rsp, err)
+        });
+}
+
+function errorResponse(rsp, err) {
+    rsp.statusCode = respCodes[err.short]
+    rsp.json({error: err})
+}
+
+function successResponse(rsp, result) {
+    rsp.statusCode = respCodes[result.short]
+    rsp.json({success: result})
+}
 
 module.exports = {
     getMostPopularSeries: getPopularSeries,
@@ -11,139 +104,3 @@ module.exports = {
     addSeriesToGroup: addSeriesToGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup
 };
-
-function getPopularSeries(req, rsp) {
-     seriesService.getPopularSeries(req.params.page)
-        .then(function(popularSeriesObj) {
-            console.log(popularSeriesObj)
-            rsp.statusCode = 200
-            rsp.json(popularSeriesObj)
-         })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body);
-        });
-}
-
-function getSeriesWithName(req, rsp) {
-    seriesService.getSeriesWithName(req.params.seriesName)
-        .then(function (seriesObj) {
-            rsp.statusCode = 200
-            rsp.json(seriesObj)
-        })
-        .catch(function (err) {
-            rsp.statusCode= err.statusCode
-            rsp.json(err.body)
-        });
-    
-}
-
-function getAllGroups(req, rsp) {
-    seriesService.getAllGroups()
-        .then(function (groupsObj) {
-            rsp.statusCode = 200;
-            rsp.end(JSON.stringify(groupsObj))
-        })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body)
-        })
-}
-
-function getGroupByName(req, rsp) {
-    seriesService.getGroupByName(req.params.groupName)
-        .then(function (groupObj) {
-            rsp.statusCode=200
-            rsp.json(groupObj)
-        })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body)
-        })
-
-   /*function processGetGroup(err, groupObj) {
-
-        if (!groupObj) {
-            groupObj = {"error": "No group found"};
-            rsp.statusCode = 404
-        } else
-            rsp.statusCode = 200;
-
-        rsp.end(JSON.stringify(groupObj))
-    }
-    */
-}
-
-function getSeriesBetweenInterval(req, rsp) {
-    seriesService.getSeriesBetweenInterval(req.params.groupName, req.params.min, req.params.max)
-        .then(function (SeriesObj) {
-            rsp.statusCode= 200;
-            rsp.json(SeriesObj)
-        })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body)
-        })
-
-    /*function processGetSeriesBetweenInterval(err, seriesObj) {
-        if(req.params.min< 2 ||req.params.max >10 ){
-            rsp.statusCode= 400
-            rsp.end(JSON.stringify(seriesObj))
-        }
-        else {
-            rsp.statusCode = 200;
-            rsp.end(JSON.stringify(seriesObj))
-        }
-    }
-
-     */
-}
-
-function createGroup(req, rsp) { //body
-    seriesService.createGroup(req.body.name, req.body.desc)
-        .then(function (createMessageObj) {
-            rsp.statusCode =201
-            rsp.json(createMessageObj)
-        })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body)
-        })
-
-}
-
-function updateGroup(req, rsp) {//params & body
-    seriesService.updateGroup(req.params.groupName, req.body.name, req.body.desc)
-        .then(function (updatedMessageObj) {
-            rsp.statusCode = 200
-            rso.json(updatedMessageObj)
-        })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body)
-        })
-}
-
-function addSeriesToGroup(req, rsp) {
-    seriesService.addSeriesToGroup(req.params.groupName, req.params.seriesName)
-        .then(function(groupObj) {
-            rsp.statusCode = 200
-            rsp.json(groupObj)
-        })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body);
-        });
-}
-
-function deleteSeriesFromGroup(req, rsp) {
-    seriesService.deleteSeriesFromGroup(req.params.groupName, req.params.seriesName)
-        .then(function (deletedMessageObj) {
-            rsp.statusCode = 200
-            rso.json(deletedMessageObj)
-        })
-        .catch(function (err) {
-            rsp.statusCode = err.statusCode
-            rsp.json(err.body)
-        })
-}
