@@ -4,6 +4,22 @@ const fetch = require('node-fetch')
 
 const baseUrl = utils.ES_URI;
 
+function checkUsersIndexExists() {
+  //TODO fetch GET ELASTIC SEARCH
+}
+
+function createUsersIndex() {
+  //TODO fetch POST ELASTIC SEARCH
+}
+
+function getUser(username) {
+   //TODO fetch GET
+}
+
+function registerUser(username, password) {
+    //TODO fetch POST
+}
+
 function getGroupByName(groupName) {
     return fetch(`${baseUrl}/groups/_search?q=name:${groupName}`, {
         headers: {

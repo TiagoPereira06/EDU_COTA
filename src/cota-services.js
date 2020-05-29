@@ -11,6 +11,23 @@ const GROUP_UPDATED_MSG = "GROUP UPDATED";
 const DB_ERROR_MSG = "ERROR IN DB";
 const API_ERROR_MSG = "ERROR IN MOVIEDATABASE API";
 
+function getUser(username) {
+    return db.getUser(username)
+}
+
+function registerUser(username, password) {
+    return db.getUser(username)
+        .then(function (respObj) {
+            return Promise.reject(utils.getRespObj(409, "User already registered."))
+        })
+        .catch(function (errObj) {
+            if (errObj.statusCode == 404)
+                return db.registerUser(username, password)
+            else
+                return Promise.reject(errObj)
+        })
+}
+
 function getPopularSeries(page) {
     return webApi.getPopularSeries(page)
         .then(seriesObj => {
@@ -260,6 +277,8 @@ function errorInvoke(err, msg) {
 }
 
 module.exports = {
+    getUser: getUser,
+    registerUser: registerUser,
     getPopularSeries: getPopularSeries,
     getSeriesWithName: getSeriesByName,
     getAllGroups: getAllGroups,

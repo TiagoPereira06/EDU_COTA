@@ -1,11 +1,31 @@
 'use strict';
 const express = require('express');
+const session = require('express-session')
 const utils = require('./cota-utils');
 const seriesWebApi = require('./cota-web-api');
+const passport = require('passport')
 
 const app = express();
 
-app.use(express.json());
+app.use(session({
+	resave: false,
+	saveUninitialized: false,
+	secret: 'iselleic'
+}));
+
+app.use(express.json())
+app.use('/', express.static(__dirname + '/public'))
+
+app.use(passport.initialize()); 
+app.use(passport.session()); 
+
+passport.serializeUser(seriesWebApi.serializeUser)
+passport.deserializeUser(seriesWebApi.deserializeUser)
+
+app.post('/login', seriesWebApi.validateLogin)
+app.get('/auth', seriesWebApi.verifyAuthenticated)
+app.post('/register', seriesWebApi.registerUser)
+app.put('/logout', seriesWebApi.logout)
 
 app.get('/series/popular/:page', seriesWebApi.getMostPopularSeries);
 app.get('/series/:seriesName', seriesWebApi.getSeriesByName);

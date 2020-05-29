@@ -9,6 +9,64 @@ respCodes[seriesService.GROUP_UPDATED_MSG] = 200;
 respCodes[seriesService.DB_ERROR_MSG] = 500;
 respCodes[seriesService.API_ERROR_MSG] = 503;
 
+function deserializeUser(user, done) {
+    //console.log("deserializeUserCalled")
+    done(null, user)
+}
+  
+function serializeUser(user, done) {
+    //console.log("serializeUserCalled")
+    done(null, user)
+}
+
+function verifyAuthenticated(req, rsp) {
+    rsp.json({result: req.isAuthenticated(), username: req.body.username})
+}
+
+function validateLogin(req, rsp) {
+    validateUser(req.body.username, req.body.password)
+        .then(() => {
+            req.logIn({
+                username: req.body.username
+             }, (errObj) => rsp.json({result: true, username: req.body.username}))
+        })
+        .catch(() => {
+            rsp.json({result: false, username: req.body.username})
+        })
+  
+    function validateUser(username, password) { 
+        return new Promise(function(resolve, reject) {
+            gameService.getUser(username)
+                .then(function (respObj) {
+                    if (password == respObj.body.password)
+                        resolve()
+                    else
+                        reject()
+                })
+                .catch(function (errObj) {
+                    reject()
+                })
+        })
+     }
+}
+
+function registerUser(req, rsp) {
+    gameService.registerUser(req.body.username, req.body.password)
+        .then(function (respObj) {
+            rsp.statusCode = respObj.statusCode
+            rsp.json(respObj)
+        })
+        .catch(function (errObj) {
+            rsp.statusCode = errObj.statusCode
+            rsp.json(errObj)
+        })
+}
+
+function logout(req, rsp) {
+    req.logOut()
+    rsp.json({message: "Logged out."})
+}
+
 function getPopularSeries(req, rsp) {
     delegateTask(
         seriesService.getPopularSeries(req.params.page),
@@ -94,6 +152,12 @@ function successResponse(rsp, result) {
 }
 
 module.exports = {
+    deserializeUser: deserializeUser,
+    serializeUser: serializeUser,
+    validateLogin: validateLogin,
+    verifyAuthenticated: verifyAuthenticated,
+    registerUser: registerUser,
+    logout: logout,
     getMostPopularSeries: getPopularSeries,
     getSeriesByName: getSeriesWithName,
     getAllGroups: getAllGroups,
