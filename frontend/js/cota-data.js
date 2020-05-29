@@ -9,7 +9,7 @@ function GroupsApiUris() {
   //  this.deleteGroup     = (groupName) => `${baseUri}groups/${groupName}`
     this.addSeriesToGroup  = (groupName) => `${baseUri}groups/${groupName}/series/`
     this.deleteSeriesFromGroup = (groupName, SeriesName) => `${baseUri}groups/${groupName}/series/${SeriesName}`
-    this.getGamesFromGroupBetween = (groupName, minPlaytime, maxPlaytime) => `${baseUri}groups/${groupName}/series/${min}&${max}`
+    this.getSeriesFromGroupBetween = (groupName, min, max) => `${baseUri}groups/${groupName}/series/${min}&${max}`
     this.updateGroup     = (groupName) => `${baseUri}groups/${groupName}`
     this.login           = () => `${baseUri}login`
     this.logout          = () => `${baseUri}logout`
