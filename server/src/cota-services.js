@@ -6,27 +6,12 @@ const utils = require('./cota-utils');
 const RESOURCE_FOUND_MSG = "RESOURCE FOUND";
 const RESOURCE_NOT_FOUND_MSG = "RESOURCE NOT FOUND";
 const GROUP_CREATED_MSG = "GROUP CREATED";
+const USER_CREATED_MSG = "USER CREATED";
 const GROUP_CONFLICT_MSG = "DUPLICATE GROUP FOUND";
+const USER_CONFLICT_MSG = "DUPLICATE USER FOUND";
 const GROUP_UPDATED_MSG = "GROUP UPDATED";
 const DB_ERROR_MSG = "ERROR IN DB";
 const API_ERROR_MSG = "ERROR IN MOVIEDATABASE API";
-
-function getUser(username) {
-    return db.getUser(username)
-}
-
-function registerUser(username, password) {
-    return db.getUser(username)
-        .then(function (respObj) {
-            return Promise.reject(utils.getRespObj(409, "User already registered."))
-        })
-        .catch(function (errObj) {
-            if (errObj.statusCode == 404)
-                return db.registerUser(username, password)
-            else
-                return Promise.reject(errObj)
-        })
-}
 
 function getPopularSeries(page) {
     return webApi.getPopularSeries(page)
@@ -271,14 +256,60 @@ function getSeriesBetweenInterval(groupName, min, max) {
         })
 }
 
+function getUserByName(username) {
+    return db.getUserByName(username)
+        .then(userObj => {
+            if (userObj) {
+                return utils.success(
+                    `USER ${username} FOUND`,
+                    RESOURCE_FOUND_MSG,
+                    userObj
+                )
+            }
+            return utils.error(
+                `USER ${username} NOT FOUND`,
+                RESOURCE_NOT_FOUND_MSG
+            )
+        })
+        .catch(err => {
+                return errorInvoke(err, DB_ERROR_MSG);
+            }
+        )
+}
+
+function createUser(username, password) {
+    return db.getUserByName(username)
+        .then(userObj => {
+            if (userObj) {
+                return utils.error(
+                    `USER ${username} ALREADY EXISTS`,
+                    USER_CONFLICT_MSG
+                )
+            } else {
+                return db.createUser(username, password)
+                    .then(result => {
+                            if (result === "created")
+                                return utils.success(
+                                    `USER ${username} CREATED`,
+                                    USER_CREATED_MSG,
+                                    result
+                                )
+                        }
+                    )
+            }
+        })
+        .catch(err => {
+                return errorInvoke(err, DB_ERROR_MSG);
+            }
+        )
+}
+
 function errorInvoke(err, msg) {
     if (err.short) return Promise.reject(err)
     else return utils.error(err, msg)
 }
 
 module.exports = {
-    getUser: getUser,
-    registerUser: registerUser,
     getPopularSeries: getPopularSeries,
     getSeriesWithName: getSeriesByName,
     getAllGroups: getAllGroups,
@@ -288,9 +319,13 @@ module.exports = {
     updateGroup: updateGroup,
     addSeriesToGroup: addSeriesToGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup,
+    getUserByName: getUserByName,
+    createUser: createUser,
     RESOURCE_FOUND_MSG: RESOURCE_FOUND_MSG,
     RESOURCE_NOT_FOUND_MSG: RESOURCE_NOT_FOUND_MSG,
+    USER_CONFLICT_MSG: USER_CONFLICT_MSG,
     GROUP_CREATED_MSG: GROUP_CREATED_MSG,
+    USER_CREATED_MSG: USER_CREATED_MSG,
     GROUP_UPDATED_MSG: GROUP_UPDATED_MSG,
     GROUP_CONFLICT_MSG: GROUP_CONFLICT_MSG,
     DB_ERROR_MSG: DB_ERROR_MSG,

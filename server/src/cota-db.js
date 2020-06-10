@@ -5,19 +5,42 @@ const fetch = require('node-fetch');
 const baseUrl = utils.ES_URI;
 
 function checkUsersIndexExists() {
-  //TODO fetch GET ELASTIC SEARCH
+    //TODO fetch GET ELASTIC SEARCH
 }
 
 function createUsersIndex() {
-  //TODO fetch POST ELASTIC SEARCH
+    //TODO fetch POST ELASTIC SEARCH
 }
 
-function getUser(username) {
-   //TODO fetch GET
+function getUserByName(username) {
+    return fetch(`${baseUrl}/users/_search?q=username:${username}`, {
+        headers: {
+            "Content-Type": "application/json"
+        },
+    })
+        .then(response => response.json())
+        .then(body => {
+            let hit = body.hits.hits;
+            if (hit.length) return hit[0]._source;
+            return undefined;
+        })
+        .catch(() => Promise.reject("Error in GetUserByName process"))
 }
 
-function registerUser(username, password) {
-    //TODO fetch POST
+function createUser(username, password) {
+    return fetch(`${baseUrl}/users/_doc`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "username": username,
+            "password": password,
+        })
+    })
+        .then(response => response.json())
+        .then(body => body.result)
+        .catch(() => Promise.reject("Error in Create User process "))
 }
 
 function getGroupByName(groupName) {
@@ -183,13 +206,16 @@ function deleteGroup(groupName) {
 
 module.exports = {
     createGroup: createGroup,
-    deleteGroup : deleteGroup,
+    deleteGroup: deleteGroup,
     getGroupByName: getGroupByName,
     getGroups: getGroups,
     updateGroup: updateGroup,
     addSeriesToGroup: addSeriesToGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup,
     getSeriesIdByGroupName: getSeriesIdByGroupName,
+    createUser: createUser,
+    getUserByName: getUserByName
+
 }
 
 

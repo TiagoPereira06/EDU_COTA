@@ -1,71 +1,16 @@
 'use strict';
 const seriesService = require('./cota-services');
+const auth = require('./cota-auth');
 const respCodes = [];
 respCodes[seriesService.RESOURCE_FOUND_MSG] = 200;
 respCodes[seriesService.RESOURCE_NOT_FOUND_MSG] = 404;
 respCodes[seriesService.GROUP_CREATED_MSG] = 201;
+respCodes[seriesService.USER_CREATED_MSG] = 201;
 respCodes[seriesService.GROUP_CONFLICT_MSG] = 409;
+respCodes[seriesService.USER_CONFLICT_MSG] = 409;
 respCodes[seriesService.GROUP_UPDATED_MSG] = 200;
 respCodes[seriesService.DB_ERROR_MSG] = 500;
 respCodes[seriesService.API_ERROR_MSG] = 503;
-
-function deserializeUser(user, done) {
-    //console.log("deserializeUserCalled")
-    done(null, user)
-}
-
-function serializeUser(user, done) {
-    //console.log("serializeUserCalled")
-    done(null, user)
-}
-
-function verifyAuthenticated(req, rsp) {
-    rsp.json({result: req.isAuthenticated(), username: req.body.username})
-}
-
-function validateLogin(req, rsp) {
-    validateUser(req.body.username, req.body.password)
-        .then(() => {
-            req.logIn({
-                username: req.body.username
-            }, (errObj) => rsp.json({result: true, username: req.body.username}))
-        })
-        .catch(() => {
-            rsp.json({result: false, username: req.body.username})
-        })
-
-    function validateUser(username, password) {
-        return new Promise(function (resolve, reject) {
-            gameService.getUser(username)
-                .then(function (respObj) {
-                    if (password == respObj.body.password)
-                        resolve()
-                    else
-                        reject()
-                })
-                .catch(function (errObj) {
-                    reject()
-                })
-        })
-    }
-}
-
-function registerUser(req, rsp) {
-    gameService.registerUser(req.body.username, req.body.password)
-        .then(function (respObj) {
-            rsp.statusCode = respObj.statusCode
-            rsp.json(respObj)
-        })
-        .catch(function (errObj) {
-            rsp.statusCode = errObj.statusCode
-            rsp.json(errObj)
-        })
-}
-
-function logout(req, rsp) {
-    req.logOut()
-    rsp.json({message: "Logged out."})
-}
 
 function getPopularSeries(req, rsp) {
     delegateTask(
@@ -131,6 +76,50 @@ function getSeriesBetweenInterval(req, rsp) {
     )
 }
 
+/*function getUser(req, rsp) {
+    delegateTask(
+        seriesService.getUser(req.params.username),
+        rsp
+    )
+}*/
+
+function login(req, res) {
+    const userinfo = req.body;
+    const username = userinfo.username;
+    const password = userinfo.password;
+    auth.getUser(username, password)
+        .then(user => login(req, user))
+        .then(() => res.json({user: username}))
+        .catch(err => res.status(401).send({error: err}));
+
+function login(req, user) {
+    return new Promise((resolve, reject) => {
+        req.login(user, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+}
+
+function logout(req, res) {
+    req.logout();
+    res.send();
+}
+
+function getUser(req, res) {
+    const username = req.isAuthenticated() && req.user.username;
+
+    if (username) {
+        res.json({user: username});
+    } else {
+        res.status(404).send();
+    }
+}
+
 function delegateTask(promise, rsp) {
     promise
         .then(result => {
@@ -152,11 +141,8 @@ function successResponse(rsp, result) {
 }
 
 module.exports = {
-    deserializeUser: deserializeUser,
-    serializeUser: serializeUser,
-    validateLogin: validateLogin,
-    verifyAuthenticated: verifyAuthenticated,
-    registerUser: registerUser,
+    getUser: getUser,
+    login: login,
     logout: logout,
     getMostPopularSeries: getPopularSeries,
     getSeriesByName: getSeriesWithName,
