@@ -15,7 +15,7 @@ function refToUser(userRef, done) {
         .then(user => {
             done(null, user)
         })
-        .catch(done("User Unknown"))
+        .catch(error => done("User Unknown"))
 }
 
 module.exports = {

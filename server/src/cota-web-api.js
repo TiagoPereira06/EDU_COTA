@@ -76,13 +76,6 @@ function getSeriesBetweenInterval(req, rsp) {
     )
 }
 
-/*function getUser(req, rsp) {
-    delegateTask(
-        seriesService.getUser(req.params.username),
-        rsp
-    )
-}*/
-
 function login(req, res) {
     const userinfo = req.body;
     const username = userinfo.username;

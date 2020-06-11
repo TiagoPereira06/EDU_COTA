@@ -29,7 +29,9 @@ window.onload = () => {
 		document.body.innerHTML = `
 			<nav>
 				<a href='#home'>Home</a> |
-				<a href='#list'>List</a>
+				<a href='#mostPopular'>MostPopular</a> |				
+				<a href='#search'>Search</a> |
+				<a href='#myGroups'>Groups</a>
 			</nav>
 			<hr>
 			<div id='mainContainer'></div>

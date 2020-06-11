@@ -7,7 +7,11 @@ function getPopularSeries(page) {
         .then(response => response.json())
         .then(body => {
             let hit = body.results || [];
-            if (hit.length) return hit.map(e => [{"name": e.original_name}])
+            if (hit.length) return hit.map(e => ({
+                "name": e.original_name,
+                "overview" : e.overview,
+                "votes" : e.vote_average
+            }));
             return undefined;
         })
         .catch(() => Promise.reject("Error in GetPopularSeries process"))
