@@ -5,18 +5,20 @@ const Handlebars = require('handlebars');
 
 let modListContentsTemplate =
     Handlebars.compile(`
-        <ul>
+        <ol>
             {{#series}}
                 <h3>{{name}}</h3>
                 <p>Description : {{overview}}</p>
                 <p>Votes : {{votes}}</p>
                 <br>
             {{/series}}
-        </ul>
+        </ol>
         <br>
-        <button id="nextButton" type="button">Next</button> 
-        <p id="pageNumber">{{pageCount}}</p> 
-        <button id="prevButton" type="button">Prev</button>
+        <div class='navButtons'>
+            <button id="nextButton" class="navitem">Next</button> 
+            <p id="pageNumber" class="navitem">{{pageCount}}</p> 
+            <button id="prevButton" class="navitem">Prev</button>
+        </div>
 `), nextButton, prevButton, page = 1, itemsContainer;
 
 function getSeries(pageCounter, itemsContainer) {

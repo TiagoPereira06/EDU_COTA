@@ -22,7 +22,7 @@ function error(detailedError, shortDescription) {
 
 function success(message, shortDescription, data) {
     return {
-        message: message.toUpperCase(),
+        message: message,
         short: shortDescription,
         data: data
     }

@@ -13,9 +13,10 @@ app.use(express.static('../client/dist'));
 
 
 app.use(cors());
-app.post('/login', seriesWebApi.login)
-app.post('/logout', seriesWebApi.logout)
-app.get('/user', seriesWebApi.getUser)
+app.post('/users/signin', seriesWebApi.signIn)
+app.post('/users/logout', seriesWebApi.logout)
+app.post('/users/signup', seriesWebApi.signUp)
+app.get('/users/user', seriesWebApi.getUser)
 
 app.get('/series/popular/:page', seriesWebApi.getMostPopularSeries);
 app.get('/series/:seriesName', seriesWebApi.getSeriesByName);

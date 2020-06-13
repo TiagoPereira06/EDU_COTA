@@ -15,7 +15,7 @@ function refToUser(userRef, done) {
         .then(user => {
             done(null, user)
         })
-        .catch(error => done("User Unknown"))
+        .catch(() => done("User Unknown"))
 }
 
 module.exports = {
@@ -34,15 +34,16 @@ module.exports = {
         passport.deserializeUser(refToUser);
     },
 
-    getUser: (username, password) => {
+    checkValidUser: (username, password) => {
         return services.getUserByName(username)
-            .then(success => {
-                if (success.data && success.data.password === password) {
-                    return Promise.resolve(success.data);
+            .then(response => {
+                if (response.data && response.data.password === password) {
+                    return Promise.resolve(response.data);
+                } else {
+                    return Promise.reject('Invalid username or password.')
                 }
-            })
-            .catch(() => {
-                return Promise.reject('Invalid username or password.');
+            }).catch(() => {
+                return Promise.reject('Invalid username or password.')
             })
     }
 }

@@ -4,14 +4,6 @@ const fetch = require('node-fetch');
 
 const baseUrl = utils.ES_URI;
 
-function checkUsersIndexExists() {
-    //TODO fetch GET ELASTIC SEARCH
-}
-
-function createUsersIndex() {
-    //TODO fetch POST ELASTIC SEARCH
-}
-
 function getUserByName(username) {
     return fetch(`${baseUrl}/users/_search?q=username:${username}`, {
         headers: {
@@ -28,7 +20,7 @@ function getUserByName(username) {
 }
 
 function createUser(username, password) {
-    return fetch(`${baseUrl}/users/_doc`, {
+    return fetch(`${baseUrl}/users/_doc?refresh=true`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
@@ -71,7 +63,7 @@ function getGroups() {
 }
 
 function createGroup(name, desc) {
-    return fetch(`${baseUrl}/groups/_doc`, {
+    return fetch(`${baseUrl}/groups/_doc?refresh=true`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"

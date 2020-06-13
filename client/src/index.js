@@ -1,53 +1,66 @@
-require('./style.css');
+require('./css/style.css');
 const routes = require('./routes.js');
+const auth = require('./auth.js');
 
 window.onload = () => {
 
-	const mainContainer = setBaseTemplate();
+    const [mainContainer, userinfo] = setBaseTemplate();
 
-	window.onhashchange = onHashChange;
+    auth.initialize(userinfo);
 
-	if (location.hash) {
-		onHashChange();
-	} else {
-		location.hash = '#home';
-	}
+    window.onhashchange = onHashChange;
 
-	function onHashChange() {
-		const [modName, ...args] = location.hash.substring(1).split('/');
+    if (location.hash) {
+        onHashChange();
+    } else {
+        location.hash = '#home';
+    }
 
-		const mod = getMod(modName);
+    function onHashChange() {
+        const [modName, ...args] = location.hash.substring(1).split('/');
 
-		const request = { 'name': modName, 'args': args };
+        const mod = getMod(modName);
 
-		mainContainer.innerHTML = mod.getView();
+        const request = {'name': modName, 'args': args};
 
-		mod.run(request);
-	}
+        mod.getView && (mainContainer.innerHTML = mod.getView());
 
-	function setBaseTemplate() {
-		document.body.innerHTML = `
+        mod.run && mod.run(request);
+    }
+
+    function setBaseTemplate() {
+        document.body.innerHTML = `
 			<nav>
-				<a href='#home'>Home</a> |
-				<a href='#mostPopular'>MostPopular</a> |				
-				<a href='#search'>Search</a> |
-				<a href='#myGroups'>Groups</a>
+			    <div class='navbar'>
+			        <div class='navigation'>
+				        <a href='#home'>Home</a> |
+				        <a href='#mostPopular'>MostPopular</a> |				
+				        <a href='#search'>Search</a> 
+				    </div>
+				    <div id='userInfo'>
+				    </div>
+			    </div>
 			</nav>
 			<hr>
 			<div id='mainContainer'></div>
 		`;
 
-		return document.querySelector('#mainContainer');
-	}
+        const mainContainer = document.querySelector('#mainContainer');
+        const userInfo = document.querySelector('#userInfo');
 
-	function getMod(name) {
+        return [mainContainer, userInfo];
+    }
 
-		const modDefault = {
-			getView: (req) => '<h1>' + req.name + '</h1>',
-			run: () => { }
-		};
+    function getMod(name) {
 
-		return routes[name] || modDefault;
-	}
+        const modDefault = {
+            getView: (req) => '<h1>' + req.name + '</h1>',
+            run: () => {
+            }
+        };
+
+        return routes[name] || modDefault;
+    }
+
 
 }

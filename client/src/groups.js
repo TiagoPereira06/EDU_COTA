@@ -1,5 +1,6 @@
 const global = require('./global.js');
 const api = require('./cota-api.js');
+const auth = require('./auth.js');
 
 const Handlebars = require('handlebars');
 
@@ -24,11 +25,19 @@ const modListContentsTemplate =
 `);
 
 module.exports = {
-    getView: () => `
-		<h1><img src='${global.logo}'>All Groups</h1>
+    getView: () => {
+        let currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            alert('Please Login To Access Your Groups')
+            location.assign('#home');
+            return;
+        }
+        return `
+		<h1><img src='${global.logo}'>${currentUser}'s Groups</h1>
 
 		<div id='allgroups'></div>	
-	`,
+	`
+    },
     run: () => {
         const itemsContainer = document.querySelector('#allgroups');
 

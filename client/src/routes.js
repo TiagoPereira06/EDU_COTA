@@ -1,6 +1,12 @@
+const auth = require('./auth.js');
+
 module.exports = {
-    'home': require('./home.js'),
-    'mostPopular': require('./mostPopular.js'),
-    'search': require('./search.js'),
-    'myGroups' : require ('./myGroups.js')
+    home: require('./home.js'),
+    mostPopular: require('./mostPopular.js'),
+    search: require('./search.js'),
+    groups : require ('./groups.js'),
+    searchResults : require ('./searchResults.js'),
+    signUp :auth.signUp,
+    signIn  : auth.signIn,
+    logout : auth.logout
 };

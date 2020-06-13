@@ -1,0 +1,36 @@
+.navbar {
+	display: flex;
+}
+
+.navigation {
+	flex: 3;
+}
+
+#userInfo {
+	flex: 1;
+}
+
+.userInfo {
+	float: right;
+}
+
+.navButtons {
+	text-align: center;
+}
+
+.navitem{
+	display:inline-block;
+}
+
+.homeItems {
+	text-align: center;
+}
+
+h1 img {
+	height: 80px;
+	vertical-align: text-bottom
+}
+
+input {
+	margin: 5px;
+}

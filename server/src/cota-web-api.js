@@ -4,11 +4,8 @@ const auth = require('./cota-auth');
 const respCodes = [];
 respCodes[seriesService.RESOURCE_FOUND_MSG] = 200;
 respCodes[seriesService.RESOURCE_NOT_FOUND_MSG] = 404;
-respCodes[seriesService.GROUP_CREATED_MSG] = 201;
-respCodes[seriesService.USER_CREATED_MSG] = 201;
-respCodes[seriesService.GROUP_CONFLICT_MSG] = 409;
-respCodes[seriesService.USER_CONFLICT_MSG] = 409;
-respCodes[seriesService.GROUP_UPDATED_MSG] = 200;
+respCodes[seriesService.RESOURCE_CREATED_MSG] = 201;
+respCodes[seriesService.RESOURCE_CONFLICT_MSG] = 409;
 respCodes[seriesService.DB_ERROR_MSG] = 500;
 respCodes[seriesService.API_ERROR_MSG] = 503;
 
@@ -76,26 +73,15 @@ function getSeriesBetweenInterval(req, rsp) {
     )
 }
 
-function login(req, res) {
-    const userinfo = req.body;
-    const username = userinfo.username;
-    const password = userinfo.password;
-    auth.getUser(username, password)
-        .then(user => login(req, user))
-        .then(() => res.json({user: username}))
-        .catch(err => res.status(401).send({error: err}));
-
-function login(req, user) {
-    return new Promise((resolve, reject) => {
-        req.login(user, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
+function signIn(req, rsp) {
+    const userInfo = req.body;
+    const username = userInfo.username;
+    const password = userInfo.password;
+    //seriesService.signIn(req)
+    auth.checkValidUser(username, password)
+        .then(user => userLogin(req, user))
+        .then(() => rsp.json({user: username}))
+        .catch(err => rsp.status(401).send({error: err}));
 }
 
 function logout(req, res) {
@@ -104,13 +90,19 @@ function logout(req, res) {
 }
 
 function getUser(req, res) {
-    const username = req.isAuthenticated() && req.user.username;
-
-    if (username) {
-        res.json({user: username});
+    const user = req.isAuthenticated() && req.user.data;
+    if (user) {
+        res.json({user: user.username});
     } else {
         res.status(404).send();
     }
+}
+
+function signUp(req, rsp) {
+    delegateTask(
+        seriesService.createUser(req.body.username, req.body.password),
+        rsp
+    )
 }
 
 function delegateTask(promise, rsp) {
@@ -133,10 +125,24 @@ function successResponse(rsp, result) {
     rsp.json({success: result})
 }
 
+function userLogin(req, user) {
+    return new Promise((resolve, reject) => {
+        req.login(user, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+
+}
+
 module.exports = {
     getUser: getUser,
-    login: login,
+    signIn: signIn,
     logout: logout,
+    signUp: signUp,
     getMostPopularSeries: getPopularSeries,
     getSeriesByName: getSeriesWithName,
     getAllGroups: getAllGroups,

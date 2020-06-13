@@ -2,14 +2,14 @@
 const webApi = require('./movie-database-data');
 const db = require('./cota-db.js');
 const utils = require('./cota-utils');
+const auth = require('./cota-auth');
 
 const RESOURCE_FOUND_MSG = "RESOURCE FOUND";
 const RESOURCE_NOT_FOUND_MSG = "RESOURCE NOT FOUND";
-const GROUP_CREATED_MSG = "GROUP CREATED";
-const USER_CREATED_MSG = "USER CREATED";
-const GROUP_CONFLICT_MSG = "DUPLICATE GROUP FOUND";
-const USER_CONFLICT_MSG = "DUPLICATE USER FOUND";
-const GROUP_UPDATED_MSG = "GROUP UPDATED";
+const RESOURCE_CREATED_MSG = "RESOURCE CREATED";
+const RESOURCE_CONFLICT_MSG = "DUPLICATE RESOURCE FOUND";
+const RESOURCE_UPDATED_MSG = "GROUP UPDATED";
+const RESOURCE_UNAUTHORIZED_MSG = "RESOURCE UNAUTHORIZED";
 const DB_ERROR_MSG = "ERROR IN DB";
 const API_ERROR_MSG = "ERROR IN MOVIEDATABASE API";
 
@@ -99,7 +99,7 @@ function createGroup(groupName, groupDesc) {
             if (replyObj) {
                 return utils.error(
                     `GROUP ${groupName} ALREADY EXISTS`,
-                    GROUP_CONFLICT_MSG
+                    RESOURCE_CONFLICT_MSG
                 )
             } else {
                 return db.createGroup(groupName, groupDesc)
@@ -107,7 +107,7 @@ function createGroup(groupName, groupDesc) {
                             if (result === "created")
                                 return utils.success(
                                     `GROUP ${groupName} CREATED`,
-                                    GROUP_CREATED_MSG,
+                                    RESOURCE_CREATED_MSG,
                                     result
                                 )
                         }
@@ -133,7 +133,7 @@ function updateGroup(oldGroupName, newGroupName, newGroupDesc) {
                                         if (result) {
                                             return utils.success(
                                                 `GROUP ${oldGroupName} UPDATED`,
-                                                GROUP_UPDATED_MSG
+                                                RESOURCE_UPDATED_MSG
                                             )
                                         } else return utils.error(
                                             `PROBLEM UPDATING ${oldGroupName} GROUP`,
@@ -144,7 +144,7 @@ function updateGroup(oldGroupName, newGroupName, newGroupDesc) {
                         } else {
                             return utils.error(
                                 `GROUP ${newGroupName} ALREADY EXISTS`,
-                                GROUP_CONFLICT_MSG
+                                RESOURCE_CONFLICT_MSG
                             )
                         }
                     })
@@ -173,7 +173,7 @@ function addSeriesToGroup(groupName, seriesName) {
                                         if (updated) {
                                             return utils.success(
                                                 `ADDED ${seriesName} SERIES ${groupName} GROUP`,
-                                                GROUP_UPDATED_MSG
+                                                RESOURCE_UPDATED_MSG
                                             )
                                         } else {
                                             return utils.error(
@@ -215,7 +215,7 @@ function deleteSeriesFromGroup(groupName, seriesName) {
                                             if (update) {
                                                 return utils.success(
                                                     `REMOVED ${seriesName} FROM ${groupName}`,
-                                                    GROUP_UPDATED_MSG
+                                                    RESOURCE_UPDATED_MSG
                                                 )
                                             } else {
                                                 return utils.error(
@@ -283,7 +283,7 @@ function createUser(username, password) {
             if (userObj) {
                 return utils.error(
                     `USER ${username} ALREADY EXISTS`,
-                    USER_CONFLICT_MSG
+                    RESOURCE_CONFLICT_MSG
                 )
             } else {
                 return db.createUser(username, password)
@@ -291,7 +291,7 @@ function createUser(username, password) {
                             if (result === "created")
                                 return utils.success(
                                     `USER ${username} CREATED`,
-                                    USER_CREATED_MSG,
+                                    RESOURCE_CREATED_MSG,
                                     result
                                 )
                         }
@@ -302,6 +302,38 @@ function createUser(username, password) {
                 return errorInvoke(err, DB_ERROR_MSG);
             }
         )
+}
+
+function login(request) {
+//TODO : MOVE LOGIN FROM API TO SERVICES
+    const requestBody = request.body;
+    const username = requestBody.username;
+    const password = requestBody.password;
+    return auth.checkValidUser(username, password)
+        .then(foundUser => {
+            return userLogin(request, foundUser)
+                .then(() => {
+                    return utils.success(
+                        `USER ${username} FOUND`,
+                        RESOURCE_FOUND_MSG,
+                    )
+                })
+        }).catch(err => {
+            return errorInvoke(err, DB_ERROR_MSG);
+        })
+
+}
+
+function userLogin(req, user) {
+    return new Promise((resolve, reject) => {
+        req.login(user, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
 }
 
 function errorInvoke(err, msg) {
@@ -321,13 +353,13 @@ module.exports = {
     deleteSeriesFromGroup: deleteSeriesFromGroup,
     getUserByName: getUserByName,
     createUser: createUser,
+    login: login,
     RESOURCE_FOUND_MSG: RESOURCE_FOUND_MSG,
     RESOURCE_NOT_FOUND_MSG: RESOURCE_NOT_FOUND_MSG,
-    USER_CONFLICT_MSG: USER_CONFLICT_MSG,
-    GROUP_CREATED_MSG: GROUP_CREATED_MSG,
-    USER_CREATED_MSG: USER_CREATED_MSG,
-    GROUP_UPDATED_MSG: GROUP_UPDATED_MSG,
-    GROUP_CONFLICT_MSG: GROUP_CONFLICT_MSG,
+    RESOURCE_CREATED_MSG: RESOURCE_CREATED_MSG,
+    RESOURCE_UPDATED_MSG: RESOURCE_UPDATED_MSG,
+    RESOURCE_CONFLICT_MSG: RESOURCE_CONFLICT_MSG,
+    RESOURCE_UNAUTHORIZED_MSG: RESOURCE_UNAUTHORIZED_MSG,
     DB_ERROR_MSG: DB_ERROR_MSG,
-    API_ERROR_MSG: API_ERROR_MSG
+    API_ERROR_MSG: API_ERROR_MSG,
 };
