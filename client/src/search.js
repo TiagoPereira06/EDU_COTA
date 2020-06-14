@@ -16,6 +16,7 @@ module.exports = {
 
 		<div id='searchDiv'></div>	
 	`,
+    authenticationRequired : false,
     run: () => {
         const itemsContainer = document.querySelector('#searchDiv');
         itemsContainer.innerHTML = formTemplate;

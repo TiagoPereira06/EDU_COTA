@@ -21,6 +21,7 @@ module.exports = {
 
 		<div id='results'></div>	
 	`,
+    authenticationRequired : false,
     run: (request) => {
         const itemsContainer = document.querySelector('#results');
         const seriesToSearch = request.args[0];

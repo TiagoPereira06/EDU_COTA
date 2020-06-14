@@ -8,7 +8,7 @@ const loggedInTemplate =
     Handlebars.compile(`	
 		<span class='userInfo'>
 			User: {{this}} | 
-			<a href="#groups">My Groups</a> |
+			<a href="#account">My Account</a> |
 			<a href='#logout'>Logout</a>
 		</span>
 	`);
@@ -87,11 +87,14 @@ module.exports = {
                 }
                 api.signIn(username, password)
                     .then(loginResponse => {
-                        setCurrentUser(loginResponse.user);
-                        location.assign(`#${(req.args && req.args[0]) || 'home'}`);
+                        if (loginResponse.user) {
+                            alert(`Welcome ${loginResponse.user}`);
+                            setCurrentUser(loginResponse.user);
+                            location.assign(`#${(req.args && req.args[0]) || 'home'}`);
+                        } else return Promise.reject(loginResponse);
 
                     }).catch(error => {
-                    alert(error);
+                    alert(error.error);
                     txtUsername.value = "";
                     txtPassword.value = "";
                 })

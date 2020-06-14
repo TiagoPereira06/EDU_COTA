@@ -27,17 +27,13 @@ const modListContentsTemplate =
 module.exports = {
     getView: () => {
         let currentUser = auth.getCurrentUser();
-        if (currentUser == null) {
-            alert('Please Login To Access Your Groups')
-            location.assign('#home');
-            return;
-        }
         return `
 		<h1><img src='${global.logo}'>${currentUser}'s Groups</h1>
 
 		<div id='allgroups'></div>	
 	`
     },
+    authenticationRequired : true,
     run: () => {
         const itemsContainer = document.querySelector('#allgroups');
 

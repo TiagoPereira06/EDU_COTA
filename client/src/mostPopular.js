@@ -58,6 +58,7 @@ module.exports = {
 
 		<div id='mostpopular'></div>	
 	`,
+    authenticationRequired : false,
     run:() => {
         itemsContainer = document.querySelector('#mostpopular');
         getSeries(page, itemsContainer)

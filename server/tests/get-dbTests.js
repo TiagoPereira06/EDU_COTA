@@ -3,7 +3,7 @@ const services = require('../src/cota-services');
 
 describe('GET All Groups', () => {
     it('Should return all Groups', done => {
-        services.getAllGroups()
+        services.getGroups()
             .then(result => {
                     assert.notStrictEqual(result.data, undefined)
                     assert.strictEqual(result.short, services.RESOURCE_FOUND_MSG)

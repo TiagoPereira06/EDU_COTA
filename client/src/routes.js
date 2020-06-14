@@ -6,6 +6,7 @@ module.exports = {
     search: require('./search.js'),
     groups : require ('./groups.js'),
     searchResults : require ('./searchResults.js'),
+    account : require('./userAccount.js'),
     signUp :auth.signUp,
     signIn  : auth.signIn,
     logout : auth.logout

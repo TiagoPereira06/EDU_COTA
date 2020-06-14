@@ -6,6 +6,7 @@ respCodes[seriesService.RESOURCE_FOUND_MSG] = 200;
 respCodes[seriesService.RESOURCE_NOT_FOUND_MSG] = 404;
 respCodes[seriesService.RESOURCE_CREATED_MSG] = 201;
 respCodes[seriesService.RESOURCE_CONFLICT_MSG] = 409;
+respCodes[seriesService.RESOURCE_UNAUTHORIZED_MSG] = 401;
 respCodes[seriesService.DB_ERROR_MSG] = 500;
 respCodes[seriesService.API_ERROR_MSG] = 503;
 
@@ -23,23 +24,37 @@ function getSeriesWithName(req, rsp) {
     )
 }
 
-function getAllGroups(req, rsp) {
+function getGroups(req, rsp) {
     delegateTask(
-        seriesService.getAllGroups(),
+        seriesService.getGroups(req),
+        rsp
+    )
+}
+
+function getSharedGroups(req, rsp) {
+    delegateTask(
+        seriesService.getSharedGroups(req),
+        rsp
+    )
+}
+
+function getPublicGroups(req, rsp) {
+    delegateTask(
+        seriesService.getPublicGroups(req),
         rsp
     )
 }
 
 function getGroupByName(req, rsp) {
     delegateTask(
-        seriesService.getGroupByName(req.params.groupName),
+        seriesService.getGroupByName(req),
         rsp
     )
 }
 
 function createGroup(req, rsp) {
     delegateTask(
-        seriesService.createGroup(req.body.name, req.body.desc),
+        seriesService.createGroup(req),
         rsp
     )
 }
@@ -47,28 +62,28 @@ function createGroup(req, rsp) {
 
 function updateGroup(req, rsp) {
     delegateTask(
-        seriesService.updateGroup(req.params.groupName, req.body.name, req.body.desc),
+        seriesService.updateGroup(req),
         rsp
     )
 }
 
 function addSeriesToGroup(req, rsp) {
     delegateTask(
-        seriesService.addSeriesToGroup(req.params.groupName, req.body.series),
+        seriesService.addSeriesToGroup(req),
         rsp
     )
 }
 
 function deleteSeriesFromGroup(req, rsp) {
     delegateTask(
-        seriesService.deleteSeriesFromGroup(req.params.groupName, req.params.seriesName),
+        seriesService.deleteSeriesFromGroup(req),
         rsp
     )
 }
 
 function getSeriesBetweenInterval(req, rsp) {
     delegateTask(
-        seriesService.getSeriesBetweenInterval(req.params.groupName, req.params.min, req.params.max),
+        seriesService.getSeriesBetweenInterval(req),
         rsp
     )
 }
@@ -77,24 +92,34 @@ function signIn(req, rsp) {
     const userInfo = req.body;
     const username = userInfo.username;
     const password = userInfo.password;
-    //seriesService.signIn(req)
+    /*seriesService.signIn(req)
+        .then(signInResponse => {
+            console.log(signInResponse);
+        })*/
     auth.checkValidUser(username, password)
         .then(user => userLogin(req, user))
         .then(() => rsp.json({user: username}))
         .catch(err => rsp.status(401).send({error: err}));
 }
 
-function logout(req, res) {
+function logout(req, rsp) {
     req.logout();
-    res.send();
+    rsp.send();
 }
 
-function getUser(req, res) {
+function getUser(req, rsp) {
+    //TODO : MOVE TO SERVICES
+
+    /*    delegateTask(
+            seriesService.getUser(req),
+            rsp
+        )*/
+
     const user = req.isAuthenticated() && req.user.data;
     if (user) {
-        res.json({user: user.username});
+        rsp.json({user: user.username});
     } else {
-        res.status(404).send();
+        rsp.status(404).send();
     }
 }
 
@@ -145,7 +170,9 @@ module.exports = {
     signUp: signUp,
     getMostPopularSeries: getPopularSeries,
     getSeriesByName: getSeriesWithName,
-    getAllGroups: getAllGroups,
+    getGroups: getGroups,
+    getSharedGroups: getSharedGroups,
+    getPublicGroups: getPublicGroups,
     getGroupByName: getGroupByName,
     getSeriesBetweenInterval: getSeriesBetweenInterval,
     createGroup: createGroup,

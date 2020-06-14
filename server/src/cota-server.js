@@ -20,9 +20,15 @@ app.get('/users/user', seriesWebApi.getUser)
 
 app.get('/series/popular/:page', seriesWebApi.getMostPopularSeries);
 app.get('/series/:seriesName', seriesWebApi.getSeriesByName);
+
+app.get('/groups/public', seriesWebApi.getPublicGroups); //GRUPOS PUBLIC DE TODOS OS USERS
+
+app.get('/groups', seriesWebApi.getGroups); //GRUPOS PRIVATE E PUBLIC DO USER
+
+app.get('/groups/shared', seriesWebApi.getSharedGroups); //GRUPOS SHAREDWITH CONTÉM USER
+
 app.put('/groups/:groupName', seriesWebApi.updateGroup);
 app.post('/groups', seriesWebApi.createGroup);
-app.get('/groups', seriesWebApi.getAllGroups);
 app.get('/groups/:groupName', seriesWebApi.getGroupByName);
 app.put('/groups/:groupName/series', seriesWebApi.addSeriesToGroup);
 app.delete('/groups/:groupName/series/:seriesName', seriesWebApi.deleteSeriesFromGroup);

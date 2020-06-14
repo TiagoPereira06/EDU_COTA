@@ -17,15 +17,21 @@ window.onload = () => {
     }
 
     function onHashChange() {
-        const [modName, ...args] = location.hash.substring(1).split('/');
+        let [modName, ...args] = location.hash.substring(1).split('/');
 
-        const mod = getMod(modName);
+        const module = getModule(modName);
 
         const request = {'name': modName, 'args': args};
 
-        mod.getView && (mainContainer.innerHTML = mod.getView());
+        if(module.authenticationRequired){
+            if (auth.getCurrentUser() == null){
+                alert("You Must Be Logged In To Access This Feature");
+                modName = '#home';
+            }
+        }
+        module.getView && (mainContainer.innerHTML = module.getView());
 
-        mod.run && mod.run(request);
+        module.run && module.run(request);
     }
 
     function setBaseTemplate() {
@@ -51,10 +57,11 @@ window.onload = () => {
         return [mainContainer, userInfo];
     }
 
-    function getMod(name) {
+    function getModule(name) {
 
         const modDefault = {
             getView: (req) => '<h1>' + req.name + '</h1>',
+            authenticationRequired : false,
             run: () => {
             }
         };

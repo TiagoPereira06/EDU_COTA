@@ -35,8 +35,8 @@ function createUser(username, password) {
         .catch(() => Promise.reject("Error in Create User process "))
 }
 
-function getGroupByName(groupName) {
-    return fetch(`${baseUrl}/groups/_search?q=name:${groupName}`, {
+function getGroupByName(groupName, owner) {
+    return fetch(`${baseUrl}/groups/_search?q=(owner:${owner})AND(name:${groupName})`, {
         headers: {
             "Content-Type": "application/json"
         },
@@ -50,7 +50,19 @@ function getGroupByName(groupName) {
         .catch(() => Promise.reject("Error in GetGroupByName process"))
 }
 
-function getGroups() {
+function getGroups(owner) {
+    return fetch(`${baseUrl}/groups/_search?q=owner:${owner}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => response.json())
+        .then(body => body.hits.hits.map(hit => hit._source))
+        .catch(() => Promise.reject("Error in GetGroupByOwner process "))
+}
+
+function getAllGroups() {
     return fetch(`${baseUrl}/groups/_search`, {
         method: 'GET',
         headers: {
@@ -59,16 +71,31 @@ function getGroups() {
     })
         .then(response => response.json())
         .then(body => body.hits.hits.map(hit => hit._source))
-        .catch(() => Promise.reject("Error in GetGroup process "))
+        .catch(() => Promise.reject("Error in GetAllGroups process "))
 }
 
-function createGroup(name, desc) {
+function getPublicGroups() {
+    return fetch(`${baseUrl}/groups/_search?q=visibility:public`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => response.json())
+        .then(body => body.hits.hits.map(hit => hit._source))
+        .catch(() => Promise.reject("Error in GetPublic Groups process "))
+}
+
+function createGroup(name, desc, owner, visibility) {
     return fetch(`${baseUrl}/groups/_doc?refresh=true`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
+            "owner": owner,
+            "visibility": visibility,
+            "sharedWith": [],
             "name": name,
             "desc": desc,
             "series": []
@@ -80,7 +107,7 @@ function createGroup(name, desc) {
 }
 
 
-function updateGroup(oldName, newName, newDesc) {
+function updateGroup(oldName, newName, newDesc, owner) {
     return fetch(`${baseUrl}/groups/_doc/_update_by_query`, {
         method: 'POST',
         headers: {
@@ -88,8 +115,19 @@ function updateGroup(oldName, newName, newDesc) {
         },
         body: JSON.stringify({
             "query": {
-                "match": {
-                    "name": `${oldName}`
+                "dis_max": {
+                    "queries": [
+                        {
+                            "match": {
+                                "owner": `${owner}`
+                            }
+                        },
+                        {
+                            "match": {
+                                "name": `${oldName}`
+                            }
+                        }
+                    ]
                 }
             },
             "script": {
@@ -107,7 +145,7 @@ function updateGroup(oldName, newName, newDesc) {
 
 }
 
-function addSeriesToGroup(groupName, series) {
+function addSeriesToGroup(groupName, series, owner) {
     return fetch(`${baseUrl}/groups/_doc/_update_by_query`, {
         method: 'POST',
         headers: {
@@ -115,8 +153,19 @@ function addSeriesToGroup(groupName, series) {
         },
         body: JSON.stringify({
             "query": {
-                "match": {
-                    "name": `${groupName}`
+                "dis_max": {
+                    "queries": [
+                        {
+                            "match": {
+                                "owner": `${owner}`
+                            }
+                        },
+                        {
+                            "match": {
+                                "name": `${groupName}`
+                            }
+                        }
+                    ]
                 }
             },
             "script": {
@@ -134,8 +183,8 @@ function addSeriesToGroup(groupName, series) {
 
 }
 
-function getSeriesIdByGroupName(groupName, seriesName) {
-    return fetch(`${baseUrl}/groups/_search?q=name:${groupName}`, {
+function getSeriesIdByGroupName(groupName, seriesName, owner) {
+    return fetch(`${baseUrl}/groups/_search?q=(owner:${owner})AND(name:${groupName})`, {
         headers: {
             "Content-Type": "application/json"
         },
@@ -149,7 +198,7 @@ function getSeriesIdByGroupName(groupName, seriesName) {
         .catch(() => Promise.reject("Error in getSeriesIdByGroupName process "))
 }
 
-function deleteSeriesFromGroup(groupName, seriesIndex) {
+function deleteSeriesFromGroup(groupName, seriesIndex, owner) {
     return fetch(`${baseUrl}/groups/_doc/_update_by_query`, {
             method: 'POST',
             headers: {
@@ -157,8 +206,19 @@ function deleteSeriesFromGroup(groupName, seriesIndex) {
             },
             body: JSON.stringify({
                     "query": {
-                        "match": {
-                            "name": `${groupName}`
+                        "dis_max": {
+                            "queries": [
+                                {
+                                    "match": {
+                                        "owner": `${owner}`
+                                    }
+                                },
+                                {
+                                    "match": {
+                                        "name": `${groupName}`
+                                    }
+                                }
+                            ]
                         }
                     },
                     "script": {
@@ -177,7 +237,7 @@ function deleteSeriesFromGroup(groupName, seriesIndex) {
         .catch(() => Promise.reject("Error in addSeriesToGroup process "))
 }
 
-function deleteGroup(groupName) {
+function deleteGroup(groupName, owner) {
     return fetch(`${baseUrl}/groups/_doc/_delete_by_query`, {
         method: 'POST',
         headers: {
@@ -185,8 +245,19 @@ function deleteGroup(groupName) {
         },
         body: JSON.stringify({
             "query": {
-                "match": {
-                    "name": `${groupName}`
+                "dis_max": {
+                    "queries": [
+                        {
+                            "match": {
+                                "owner": `${owner}`
+                            }
+                        },
+                        {
+                            "match": {
+                                "name": `${groupName}`
+                            }
+                        }
+                    ]
                 }
             }
         })
@@ -200,15 +271,16 @@ module.exports = {
     createGroup: createGroup,
     deleteGroup: deleteGroup,
     getGroupByName: getGroupByName,
+    getPublicGroups: getPublicGroups,
+    getAllGroups : getAllGroups,
     getGroups: getGroups,
     updateGroup: updateGroup,
     addSeriesToGroup: addSeriesToGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup,
     getSeriesIdByGroupName: getSeriesIdByGroupName,
     createUser: createUser,
-    getUserByName: getUserByName
-
-}
+    getUserByName: getUserByName,
+};
 
 
 

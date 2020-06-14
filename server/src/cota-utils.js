@@ -15,7 +15,7 @@ const MOCHA_TIMEOUT = 10000000;
 
 function error(detailedError, shortDescription) {
     return Promise.reject({
-        detail: detailedError.toUpperCase(),
+        detail: detailedError,
         short: shortDescription
     })
 }

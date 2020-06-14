@@ -1,8 +1,6 @@
-'use strict';
-const webApi = require('./movie-database-data');
+const webApi = require('./movie-database-data.js');
 const db = require('./cota-db.js');
-const utils = require('./cota-utils');
-const auth = require('./cota-auth');
+const utils = require('./cota-utils.js');
 
 const RESOURCE_FOUND_MSG = "RESOURCE FOUND";
 const RESOURCE_NOT_FOUND_MSG = "RESOURCE NOT FOUND";
@@ -18,13 +16,13 @@ function getPopularSeries(page) {
         .then(seriesObj => {
             if (seriesObj) {
                 return utils.success(
-                    `MOST POPULAR SERIES SUCCESSFULLY RETRIEVED`,
+                    `Most popular series successful retrieved`,
                     RESOURCE_FOUND_MSG,
                     seriesObj,
                 )
             }
             return utils.error(
-                `ERROR AT FETCHING POPULAR SERIES`,
+                `Error at fetching popular series`,
                 RESOURCE_NOT_FOUND_MSG
             )
         })
@@ -39,13 +37,13 @@ function getSeriesByName(seriesName) {
         .then(seriesObj => {
             if (seriesObj) {
                 return utils.success(
-                    `SERIES ${seriesName} FOUND`,
+                    `Series ${seriesName} found`,
                     RESOURCE_FOUND_MSG,
                     seriesObj
                 )
             } else {
                 return utils.error(
-                    `CANNOT FIND ${seriesName} SERIES`,
+                    `Cannot find ${seriesName} series`,
                     RESOURCE_NOT_FOUND_MSG
                 )
             }
@@ -56,204 +54,337 @@ function getSeriesByName(seriesName) {
         )
 }
 
-function getAllGroups() {
-    return db.getGroups()
-        .then(allGroups => {
-                return utils.success(
-                    "ALL GROUPS REGISTERED",
-                    RESOURCE_FOUND_MSG,
-                    allGroups
-                )
-            }
+function getGroups(request) {
+    if (!request.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
         )
-        .catch(err => {
-                return errorInvoke(err, DB_ERROR_MSG);
-            }
-        )
-}
-
-function getGroupByName(groupName) {
-    return db.getGroupByName(groupName)
-        .then(groupObj => {
-            if (groupObj) {
-                return utils.success(
-                    `GROUP ${groupName} FOUND`,
-                    RESOURCE_FOUND_MSG,
-                    groupObj
-                )
-            }
-            return utils.error(
-                `GROUP ${groupName} NOT FOUND`,
-                RESOURCE_NOT_FOUND_MSG
-            )
-        })
-        .catch(err => {
-                return errorInvoke(err, DB_ERROR_MSG);
-            }
-        )
-}
-
-function createGroup(groupName, groupDesc) {
-    return db.getGroupByName(groupName)
-        .then(replyObj => {
-            if (replyObj) {
-                return utils.error(
-                    `GROUP ${groupName} ALREADY EXISTS`,
-                    RESOURCE_CONFLICT_MSG
-                )
-            } else {
-                return db.createGroup(groupName, groupDesc)
-                    .then(result => {
-                            if (result === "created")
-                                return utils.success(
-                                    `GROUP ${groupName} CREATED`,
-                                    RESOURCE_CREATED_MSG,
-                                    result
-                                )
-                        }
+    } else {
+        return db.getGroups(request.user.data.username)
+            .then(allGroups => {
+                    return utils.success(
+                        "All groups registered",
+                        RESOURCE_FOUND_MSG,
+                        allGroups
                     )
-            }
-        })
-        .catch(err => {
-                return errorInvoke(err, DB_ERROR_MSG);
-            }
-        )
+                }
+            )
+            .catch(err => {
+                    return errorInvoke(err, DB_ERROR_MSG);
+                }
+            )
+    }
 }
 
+function getSharedGroups(request) {
+    if (!request.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        const currentUser = request.user.data.username;
+        return db.getAllGroups()
+            .then(sharedGroups => {
+                    sharedGroups = sharedGroups.filter((group) => {
+                        return group.sharedWith.some((user) => user.username === currentUser)
+                    });
+                    if (sharedGroups.length) {
+                        return utils.success(
+                            `All groups shared with ${currentUser}`,
+                            RESOURCE_FOUND_MSG,
+                            sharedGroups
+                        )
+                    } else {
+                        return utils.error(
+                            `No groups found shared with ${currentUser}`,
+                            RESOURCE_NOT_FOUND_MSG
+                        )
+                    }
+                }
+            )
+            .catch(err => {
+                    return errorInvoke(err, DB_ERROR_MSG);
+                }
+            )
+    }
+}
 
-function updateGroup(oldGroupName, newGroupName, newGroupDesc) {
-    return db.getGroupByName(oldGroupName)
-        .then(oldGroup => {
-            if (oldGroup) {
-                return db.getGroupByName(newGroupName)
-                    .then(newGroup => {
-                        if (!newGroup) {
-                            return db.updateGroup(oldGroupName, newGroupName, newGroupDesc)
-                                .then(result => {
-                                        if (result) {
-                                            return utils.success(
-                                                `GROUP ${oldGroupName} UPDATED`,
-                                                RESOURCE_UPDATED_MSG
-                                            )
-                                        } else return utils.error(
-                                            `PROBLEM UPDATING ${oldGroupName} GROUP`,
-                                            DB_ERROR_MSG
-                                        )
-                                    }
-                                )
-                        } else {
-                            return utils.error(
-                                `GROUP ${newGroupName} ALREADY EXISTS`,
-                                RESOURCE_CONFLICT_MSG
-                            )
-                        }
-                    })
+function getPublicGroups(request) {
+    if (!request.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        return db.getPublicGroups()
+            .then(publicGroups => {
+                    return utils.success(
+                        "All public groups registered",
+                        RESOURCE_FOUND_MSG,
+                        publicGroups
+                    )
+                }
+            )
+            .catch(err => {
+                    return errorInvoke(err, DB_ERROR_MSG);
+                }
+            )
+    }
+}
 
-            } else {
+function getGroupByName(request) {
+    const groupName = request.params.groupName;
+
+    if (!request.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        const owner = request.user.data.username;
+        return db.getGroupByName(groupName, owner)
+            .then(groupObj => {
+                if (groupObj) {
+                    return utils.success(
+                        `Group ${groupName} found`,
+                        RESOURCE_FOUND_MSG,
+                        groupObj
+                    )
+                }
                 return utils.error(
-                    `GROUP ${oldGroupName} NOT FOUND`,
+                    `Group ${groupName} not found`,
                     RESOURCE_NOT_FOUND_MSG
                 )
-            }
-        })
-        .catch(err => {
-            return errorInvoke(err, DB_ERROR_MSG);
-        })
+            })
+            .catch(err => {
+                    return errorInvoke(err, DB_ERROR_MSG);
+                }
+            )
+    }
 }
 
-function addSeriesToGroup(groupName, seriesName) {
-    return db.getGroupByName(groupName)
-        .then(group => {
-                if (group) {
-                    return webApi.getSeriesWithName(seriesName)
-                        .then(series => {
-                            if (series) {
-                                return db.addSeriesToGroup(groupName, series[0])
-                                    .then(updated => {
-                                        if (updated) {
-                                            return utils.success(
-                                                `ADDED ${seriesName} SERIES ${groupName} GROUP`,
-                                                RESOURCE_UPDATED_MSG
-                                            )
-                                        } else {
-                                            return utils.error(
-                                                `PROBLEM ADDING ${seriesName} TO ${groupName} GROUP `,
+function createGroup(request) {
+    const groupName = request.body.name;
+    const groupDesc = request.body.desc;
+    const groupVisibility = request.body.visibility;
+
+    if (!request.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        const owner = request.user.data.username;
+        return db.getGroupByName(groupName, owner)
+            .then(replyObj => {
+                if (replyObj) {
+                    return utils.error(
+                        `Group ${groupName} already exists`,
+                        RESOURCE_CONFLICT_MSG
+                    )
+                } else {
+                    return db.createGroup(groupName, groupDesc, owner, groupVisibility)
+                        .then(result => {
+                                if (result === "created")
+                                    return utils.success(
+                                        `Group ${groupName} created`,
+                                        RESOURCE_CREATED_MSG,
+                                        result
+                                    )
+                            }
+                        )
+                }
+            })
+            .catch(err => {
+                    return errorInvoke(err, DB_ERROR_MSG);
+                }
+            )
+    }
+}
+
+
+function updateGroup(req) {
+    const oldGroupName = req.params.groupName;
+    const newGroupName = req.body.name;
+    const newGroupDesc = req.body.desc;
+
+    if (!req.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        const owner = req.user.data.username;
+        return db.getGroupByName(oldGroupName, owner)
+            .then(oldGroup => {
+                if (oldGroup) {
+                    return db.getGroupByName(newGroupName, owner)
+                        .then(newGroup => {
+                            if (!newGroup) {
+                                return db.updateGroup(oldGroupName, newGroupName, newGroupDesc, owner)
+                                    .then(result => {
+                                            if (result) {
+                                                return utils.success(
+                                                    `Group ${oldGroupName} updated`,
+                                                    RESOURCE_UPDATED_MSG
+                                                )
+                                            } else return utils.error(
+                                                `Problem updating ${oldGroupName} group`,
                                                 DB_ERROR_MSG
                                             )
                                         }
-                                    })
-
+                                    )
                             } else {
                                 return utils.error(
-                                    `SERIES ${seriesName} NOT FOUND`,
-                                    RESOURCE_NOT_FOUND_MSG
+                                    `Group ${newGroupName} already exists`,
+                                    RESOURCE_CONFLICT_MSG
                                 )
                             }
                         })
+
                 } else {
                     return utils.error(
-                        `GROUP ${groupName} NOT FOUND`,
+                        `Group ${oldGroupName} not found`,
                         RESOURCE_NOT_FOUND_MSG
                     )
                 }
-            }
-        )
-        .catch(err => {
-            return errorInvoke(err, DB_ERROR_MSG);
-        })
+            })
+            .catch(err => {
+                return errorInvoke(err, DB_ERROR_MSG);
+            })
+    }
+
 }
 
-function deleteSeriesFromGroup(groupName, seriesName) {
-    return db.getGroupByName(groupName)
-        .then(group => {
-                if (group) {
-                    return db.getSeriesIdByGroupName(groupName, seriesName)
-                        .then(seriesIndex => {
-                                if (seriesIndex !== -1) {
-                                    return db.deleteSeriesFromGroup(groupName, seriesIndex)
-                                        .then(update => {
-                                            if (update) {
+function addSeriesToGroup(request) {
+    const groupName = request.params.groupName;
+    const seriesName = request.body.series;
+
+    if (!req.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        const owner = req.user.data.username;
+        return db.getGroupByName(groupName, owner)
+            .then(group => {
+                    if (group) {
+                        return webApi.getSeriesWithName(seriesName)
+                            .then(series => {
+                                if (series) {
+                                    return db.addSeriesToGroup(groupName, series[0])
+                                        .then(updated => {
+                                            if (updated) {
                                                 return utils.success(
-                                                    `REMOVED ${seriesName} FROM ${groupName}`,
+                                                    `Added ${seriesName} series ${groupName} group`,
                                                     RESOURCE_UPDATED_MSG
                                                 )
                                             } else {
                                                 return utils.error(
-                                                    `PROBLEM DELETING ${seriesName} FROM ${groupName} GROUP `,
+                                                    `Problem adding ${seriesName} to ${groupName} group `,
                                                     DB_ERROR_MSG
                                                 )
                                             }
                                         })
+
                                 } else {
                                     return utils.error(
-                                        `SERIES ${seriesName} NOT FOUND AT ${groupName}`,
+                                        `Series ${seriesName} not found`,
                                         RESOURCE_NOT_FOUND_MSG
                                     )
                                 }
-                            }
+                            })
+                    } else {
+                        return utils.error(
+                            `Group ${groupName} not found`,
+                            RESOURCE_NOT_FOUND_MSG
                         )
-                } else {
-                    return utils.error(
-                        `GROUP ${groupName} NOT FOUND`,
-                        RESOURCE_NOT_FOUND_MSG
-                    )
+                    }
                 }
-            }
-        )
-        .catch((err) => {
-            return errorInvoke(err, DB_ERROR_MSG);
-        })
+            )
+            .catch(err => {
+                return errorInvoke(err, DB_ERROR_MSG);
+            })
+    }
 }
 
-function getSeriesBetweenInterval(groupName, min, max) {
-    return getGroupByName(groupName)
-        .then(series => {
-            return utils.success(
-                `SERIES FROM ${groupName} VOTES BETWEEN ${min} and ${max}`,
-                RESOURCE_FOUND_MSG,
-                series.data.series.filter(obj => obj.vote_average > parseInt(min) && obj.vote_average < parseInt(max))
+function deleteSeriesFromGroup(request) {
+    const groupName = request.params.groupName;
+    const seriesName = request.params.seriesName;
+
+    if (!req.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        const owner = req.user.data.username;
+        return db.getGroupByName(groupName, owner)
+            .then(group => {
+                    if (group) {
+                        return db.getSeriesIdByGroupName(groupName, seriesName, owner)
+                            .then(seriesIndex => {
+                                    if (seriesIndex !== -1) {
+                                        return db.deleteSeriesFromGroup(groupName, seriesIndex, owner)
+                                            .then(update => {
+                                                if (update) {
+                                                    return utils.success(
+                                                        `Removed ${seriesName} from ${groupName}`,
+                                                        RESOURCE_UPDATED_MSG
+                                                    )
+                                                } else {
+                                                    return utils.error(
+                                                        `Problem deleting ${seriesName} from ${groupName} group `,
+                                                        DB_ERROR_MSG
+                                                    )
+                                                }
+                                            })
+                                    } else {
+                                        return utils.error(
+                                            `Series ${seriesName} not found at ${groupName}`,
+                                            RESOURCE_NOT_FOUND_MSG
+                                        )
+                                    }
+                                }
+                            )
+                    } else {
+                        return utils.error(
+                            `Group ${groupName} not found`,
+                            RESOURCE_NOT_FOUND_MSG
+                        )
+                    }
+                }
             )
-        })
+            .catch((err) => {
+                return errorInvoke(err, DB_ERROR_MSG);
+            })
+    }
+}
+
+function getSeriesBetweenInterval(request) {
+    const groupName = request.params.groupName;
+    const min = request.params.min;
+    const max = request.params.max;
+
+    if (!req.isAuthenticated()) {
+        return utils.error(
+            `YOU MUST BE LOGGED IN`,
+            RESOURCE_UNAUTHORIZED_MSG
+        )
+    } else {
+        const owner = req.user.data.username;
+        return getGroupByName(groupName, owner)
+            .then(series => {
+                return utils.success(
+                    `Series from ${groupName} votes between ${min} and ${max}`,
+                    RESOURCE_FOUND_MSG,
+                    series.data.series.filter(obj => obj.vote_average > parseInt(min) && obj.vote_average < parseInt(max))
+                )
+            })
+    }
 }
 
 function getUserByName(username) {
@@ -261,13 +392,13 @@ function getUserByName(username) {
         .then(userObj => {
             if (userObj) {
                 return utils.success(
-                    `USER ${username} FOUND`,
+                    `User ${username} found`,
                     RESOURCE_FOUND_MSG,
                     userObj
                 )
             }
             return utils.error(
-                `USER ${username} NOT FOUND`,
+                `User ${username} not found`,
                 RESOURCE_NOT_FOUND_MSG
             )
         })
@@ -282,7 +413,7 @@ function createUser(username, password) {
         .then(userObj => {
             if (userObj) {
                 return utils.error(
-                    `USER ${username} ALREADY EXISTS`,
+                    `User ${username} already exists`,
                     RESOURCE_CONFLICT_MSG
                 )
             } else {
@@ -290,7 +421,7 @@ function createUser(username, password) {
                     .then(result => {
                             if (result === "created")
                                 return utils.success(
-                                    `USER ${username} CREATED`,
+                                    `User ${username} created`,
                                     RESOURCE_CREATED_MSG,
                                     result
                                 )
@@ -304,28 +435,28 @@ function createUser(username, password) {
         )
 }
 
-function login(request) {
+function signIn(request) {
 //TODO : MOVE LOGIN FROM API TO SERVICES
-    const requestBody = request.body;
-    const username = requestBody.username;
-    const password = requestBody.password;
-    return auth.checkValidUser(username, password)
-        .then(foundUser => {
-            return userLogin(request, foundUser)
-                .then(() => {
-                    return utils.success(
-                        `USER ${username} FOUND`,
-                        RESOURCE_FOUND_MSG,
-                    )
-                })
-        }).catch(err => {
-            return errorInvoke(err, DB_ERROR_MSG);
-        })
-
+    /* const requestBody = request.body;
+     const username = requestBody.username;
+     const password = requestBody.password;
+     return auth.checkValidUser(username, password)
+         .then(foundUser => {
+             return userLogin(request, foundUser)
+                 .then(() => {
+                     return utils.success(
+                         `USER ${username} FOUND`,
+                         RESOURCE_FOUND_MSG,
+                     )
+                 })
+         }).catch(err => {
+             return errorInvoke(err, DB_ERROR_MSG);
+         })
+ */
 }
 
 function userLogin(req, user) {
-    return new Promise((resolve, reject) => {
+    /*return new Promise((resolve, reject) => {
         req.login(user, (err, result) => {
             if (err) {
                 reject(err);
@@ -333,7 +464,31 @@ function userLogin(req, user) {
                 resolve(result);
             }
         });
-    });
+    });*/
+}
+
+function getUser(request) {
+    /* return new Promise(((resolve, reject) => {
+         const user = request.isAuthenticated() && request.user.data;
+         if (user) {
+             return utils.success(
+                 `User ${user.username} found`,
+                 RESOURCE_FOUND_MSG,
+                 user.username
+             )
+         } else {
+             return utils.error(
+                 `User not found`,
+                 RESOURCE_NOT_FOUND_MSG
+             )
+         }
+     }))
+         .then(resolve => {
+             console.log("Hrllo");
+         })
+         .catch(errorInvoke => {
+             console.log("Hrllo");
+         });*/
 }
 
 function errorInvoke(err, msg) {
@@ -344,16 +499,19 @@ function errorInvoke(err, msg) {
 module.exports = {
     getPopularSeries: getPopularSeries,
     getSeriesWithName: getSeriesByName,
-    getAllGroups: getAllGroups,
+    getPublicGroups: getPublicGroups,
+    getSharedGroups: getSharedGroups,
+    getGroups: getGroups,
     getGroupByName: getGroupByName,
     getSeriesBetweenInterval: getSeriesBetweenInterval,
     createGroup: createGroup,
     updateGroup: updateGroup,
+    getUser: getUser,
     addSeriesToGroup: addSeriesToGroup,
     deleteSeriesFromGroup: deleteSeriesFromGroup,
     getUserByName: getUserByName,
     createUser: createUser,
-    login: login,
+    signIn: signIn,
     RESOURCE_FOUND_MSG: RESOURCE_FOUND_MSG,
     RESOURCE_NOT_FOUND_MSG: RESOURCE_NOT_FOUND_MSG,
     RESOURCE_CREATED_MSG: RESOURCE_CREATED_MSG,

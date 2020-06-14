@@ -28,7 +28,7 @@ module.exports = {
         }));
 
         app.use(passport.initialize(undefined));
-        app.use(passport.session());
+        app.use(passport.session(undefined));
 
         passport.serializeUser(userToRef);
         passport.deserializeUser(refToUser);
@@ -44,6 +44,6 @@ module.exports = {
                 }
             }).catch(() => {
                 return Promise.reject('Invalid username or password.')
-            })
+            });
     }
 }
