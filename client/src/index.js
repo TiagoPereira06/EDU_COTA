@@ -6,15 +6,16 @@ window.onload = () => {
 
     const [mainContainer, userinfo] = setBaseTemplate();
 
-    auth.initialize(userinfo);
-
-    window.onhashchange = onHashChange;
-
-    if (location.hash) {
-        onHashChange();
-    } else {
-        location.hash = '#home';
-    }
+    auth.initialize(userinfo)
+        .then(() => {
+                window.onhashchange = onHashChange;
+                if (location.hash) {
+                    onHashChange();
+                } else {
+                    location.hash = '#home';
+                }
+            }
+        );
 
     function onHashChange() {
         let [modName, ...args] = location.hash.substring(1).split('/');
@@ -23,15 +24,19 @@ window.onload = () => {
 
         const request = {'name': modName, 'args': args};
 
-        if(module.authenticationRequired){
-            if (auth.getCurrentUser() == null){
-                alert("You Must Be Logged In To Access This Feature");
-                modName = '#home';
-            }
-        }
-        module.getView && (mainContainer.innerHTML = module.getView());
+        const currentUser = auth.getCurrentUser();
+        const authReq = module.authenticationRequired;
 
-        module.run && module.run(request);
+        console.log(`Current User : `, currentUser);
+        console.log(`Auth Required ? : `, authReq);
+
+        if (authReq && (currentUser === null)) {
+            alert("You Must Be Logged In To Access This Feature");
+            location.hash = '#home';
+        } else {
+            module.getView && (mainContainer.innerHTML = module.getView());
+            module.run && module.run(request);
+        }
     }
 
     function setBaseTemplate() {
@@ -61,7 +66,7 @@ window.onload = () => {
 
         const modDefault = {
             getView: (req) => '<h1>' + req.name + '</h1>',
-            authenticationRequired : false,
+            authenticationRequired: false,
             run: () => {
             }
         };

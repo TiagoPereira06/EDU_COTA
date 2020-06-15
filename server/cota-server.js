@@ -1,7 +1,6 @@
 'use strict';
 const express = require('express');
 const auth = require('./cota-auth.js');
-const cors = require('cors')
 const utils = require('./cota-utils');
 const seriesWebApi = require('./cota-web-api');
 
@@ -9,14 +8,12 @@ const app = express();
 auth.initialize(app);
 
 app.use(express.json())
-app.use(express.static('../client/dist'));
+app.use(express.static("../client/dist"));
 
-
-app.use(cors());
 app.post('/users/signin', seriesWebApi.signIn)
 app.post('/users/logout', seriesWebApi.logout)
 app.post('/users/signup', seriesWebApi.signUp)
-app.get('/users/user', seriesWebApi.getUser)
+app.get('/users/current', seriesWebApi.getUser)
 
 app.get('/series/popular/:page', seriesWebApi.getMostPopularSeries);
 app.get('/series/:seriesName', seriesWebApi.getSeriesByName);

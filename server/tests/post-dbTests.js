@@ -1,5 +1,5 @@
 const assert = require('assert');
-const services = require('../src/cota-services');
+const services = require('../cota-services');
 
 describe('POST Group', () => {
     it('Should return group created', done => {

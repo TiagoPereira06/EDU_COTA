@@ -7,11 +7,11 @@ const services = require('./cota-services');
 const FileStore = require('session-file-store')(session);
 
 function userToRef(user, done) {
-    done(null, user.username);
+    done(null, user);
 }
 
 function refToUser(userRef, done) {
-    services.getUserByName(userRef)
+    services.getUserByName(userRef.username)
         .then(user => {
             done(null, user)
         })

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const services = require('../src/cota-services');
+const services = require('../cota-services');
 
 describe('GET All Groups', () => {
     it('Should return all Groups', done => {

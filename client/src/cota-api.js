@@ -1,42 +1,56 @@
 'use strict';
 
 function getPopularSeries(page) {
-    return fetch(`http://localhost:8080/series/popular/${page}`)
+    return fetch(`/series/popular/${page}`)
         .then(response => {
             return response.json()
         });
 }
 
 function getSeriesWithName(seriesName) {
-    return fetch(`http://localhost:8080/series/${seriesName}`)
+    return fetch(`/series/${seriesName}`)
         .then(response => {
             return response.json()
         });
 }
 
-function getAllGroups() {
-    return fetch(`http://localhost:8080/groups`)
+function getAllPublicGroups() {
+    return fetch(`/groups/public`)
+        .then(response => {
+            return response.json()
+        });
+}
+
+function getGroups() {
+    return fetch(`/groups`)
+        .then(response => {
+            return response.json()
+        });
+}
+
+function getSharedGroups() {
+    return fetch(`/groups/shared`)
         .then(response => {
             return response.json()
         });
 }
 
 function getGroupByName(groupName) {
-    return fetch(`http://localhost:8080/groups/${groupName}`)
+    return fetch(`/groups/${groupName}`)
         .then(response => {
             return response.json()
         });
 }
 
 function getUser() {
-    return fetch(`http://localhost:8080/users/user`)
+    return fetch(`/users/current`)
         .then(response => {
             return response.json()
         });
 }
 
 function signIn(username, password) {
-    return fetch('http://localhost:8080/users/signin', {
+    return fetch('/users/signin', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',
@@ -52,7 +66,7 @@ function signIn(username, password) {
 }
 
 function logout() {
-    return fetch('http://localhost:8080/users/logout', {
+    return fetch('/users/logout', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',
@@ -64,7 +78,7 @@ function logout() {
 }
 
 function signUp(username, password) {
-    return fetch('http://localhost:8080/users/signup', {
+    return fetch('/users/signup', {
         method: 'POST',
         headers: {
             'Content-type': 'application/json',
@@ -82,7 +96,9 @@ function signUp(username, password) {
 module.exports = {
     getPopularSeries: getPopularSeries,
     getSeriesWithName: getSeriesWithName,
-    getAllGroups: getAllGroups,
+    getAllPublicGroups: getAllPublicGroups,
+    getGroups: getGroups,
+    getSharedGroups: getSharedGroups,
     getGroupByName: getGroupByName,
     signIn: signIn,
     signUp: signUp,

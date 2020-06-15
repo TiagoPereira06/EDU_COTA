@@ -41,7 +41,7 @@ module.exports = {
     initialize: (userInfo) => {
 
         userInfoBox = userInfo;
-        api.getUser()
+        return api.getUser()
             .then(userResponse => {
                 setCurrentUser(userResponse.user);
             })

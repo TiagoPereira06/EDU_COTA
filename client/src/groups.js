@@ -10,6 +10,7 @@ const modListContentsTemplate =
             {{#this}}
                 <h3>{{name}}</h3>
                 <p>Description : {{desc}}</p>
+                <p>Visibility : {{visibility}}</p>
                     <p><b>Series :</b></p>
                     {{#series}}
                     <ul>
@@ -37,7 +38,7 @@ module.exports = {
     run: () => {
         const itemsContainer = document.querySelector('#allgroups');
 
-        api.getAllGroups()
+        api.getGroups()
             .then(allGroups => {
                     if (allGroups.success)
                         itemsContainer.innerHTML = modListContentsTemplate(allGroups.success.data)

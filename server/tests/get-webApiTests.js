@@ -1,5 +1,5 @@
 const assert = require('assert');
-const services = require('../src/cota-services');
+const services = require('../cota-services');
 
 describe('GET Series By Name', () => {
     it('Should return Homeland with the message resource found', done => {

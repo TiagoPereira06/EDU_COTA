@@ -102,6 +102,19 @@ function signIn(req, rsp) {
         .catch(err => rsp.status(401).send({error: err}));
 }
 
+function userLogin(req, user) {
+    return new Promise((resolve, reject) => {
+        req.login(user, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+
+}
+
 function logout(req, rsp) {
     req.logout();
     rsp.send();
@@ -150,18 +163,6 @@ function successResponse(rsp, result) {
     rsp.json({success: result})
 }
 
-function userLogin(req, user) {
-    return new Promise((resolve, reject) => {
-        req.login(user, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-
-}
 
 module.exports = {
     getUser: getUser,

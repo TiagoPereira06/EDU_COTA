@@ -22,13 +22,34 @@
 	display:inline-block;
 }
 
+.navButton{
+	background-color: #dcc435;
+	border: none;
+	color: black;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 25px;
+	margin-left: 35px;
+}
+
 .homeItems {
 	text-align: center;
 }
 
 h1 img {
+	display: block;
+	margin-bottom: 20px;
 	height: 80px;
-	vertical-align: text-bottom
+	vertical-align: after-edge;
+}
+
+.homeImage {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	height: 80px;
 }
 
 input {
