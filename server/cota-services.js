@@ -262,41 +262,49 @@ function addSeriesToGroup(request) {
     const groupName = request.params.groupName;
     const seriesName = request.body.series;
 
-    if (!req.isAuthenticated()) {
+    if (!request.isAuthenticated()) {
         return utils.error(
             `YOU MUST BE LOGGED IN`,
             RESOURCE_UNAUTHORIZED_MSG
         )
     } else {
-        const owner = req.user.data.username;
+        const owner = request.user.data.username;
         return db.getGroupByName(groupName, owner)
             .then(group => {
                     if (group) {
-                        return webApi.getSeriesWithName(seriesName)
-                            .then(series => {
-                                if (series) {
-                                    return db.addSeriesToGroup(groupName, series[0])
-                                        .then(updated => {
-                                            if (updated) {
-                                                return utils.success(
-                                                    `Added ${seriesName} series ${groupName} group`,
-                                                    RESOURCE_UPDATED_MSG
-                                                )
-                                            } else {
-                                                return utils.error(
-                                                    `Problem adding ${seriesName} to ${groupName} group `,
-                                                    DB_ERROR_MSG
-                                                )
-                                            }
-                                        })
+                        const duplicate = (series) => series.name === seriesName;
+                        if (!group.series.some(duplicate)) {
+                            return webApi.getSeriesWithName(seriesName)
+                                .then(series => {
+                                    if (series) {
+                                        return db.addSeriesToGroup(groupName, series[0])
+                                            .then(updated => {
+                                                if (updated) {
+                                                    return utils.success(
+                                                        `Added ${seriesName} series ${groupName} group`,
+                                                        RESOURCE_UPDATED_MSG
+                                                    )
+                                                } else {
+                                                    return utils.error(
+                                                        `Problem adding ${seriesName} to ${groupName} group `,
+                                                        DB_ERROR_MSG
+                                                    )
+                                                }
+                                            })
 
-                                } else {
-                                    return utils.error(
-                                        `Series ${seriesName} not found`,
-                                        RESOURCE_NOT_FOUND_MSG
-                                    )
-                                }
-                            })
+                                    } else {
+                                        return utils.error(
+                                            `Series ${seriesName} not found`,
+                                            RESOURCE_NOT_FOUND_MSG
+                                        )
+                                    }
+                                })
+                        } else {
+                            return utils.error(
+                                `Series ${seriesName} already at ${groupName} group `,
+                                RESOURCE_CONFLICT_MSG
+                            )
+                        }
                     } else {
                         return utils.error(
                             `Group ${groupName} not found`,

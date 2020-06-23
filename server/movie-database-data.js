@@ -8,9 +8,10 @@ function getPopularSeries(page) {
         .then(body => {
             let hit = body.results || [];
             if (hit.length) return hit.map(e => ({
-                "name": e.original_name,
-                "overview" : e.overview,
-                "votes" : e.vote_average
+                "name": e.name,
+                "overview": e.overview,
+                "votes": e.vote_average * 10,
+                "poster" : util.API_IMAGE_START.concat(e.poster_path)
             }));
             return undefined;
         })
@@ -22,7 +23,13 @@ function getSeriesByName(name) {
         .then(response => response.json())
         .then(body => {
             let hit = body.results;
-            if (hit.length) return hit;
+            if (hit.length) {
+                hit.forEach(series => {
+                    series.vote_average = series.vote_average * 10;
+                    series.poster_path = util.API_IMAGE_START.concat(series.poster_path);
+                });
+                return hit;
+            }
             return undefined;
         })
         .catch(() => Promise.reject("Error in GetSeriesByName process"))

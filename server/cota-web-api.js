@@ -3,6 +3,7 @@ const seriesService = require('./cota-services');
 const auth = require('./cota-auth');
 const respCodes = [];
 respCodes[seriesService.RESOURCE_FOUND_MSG] = 200;
+respCodes[seriesService.RESOURCE_UPDATED_MSG] = 200;
 respCodes[seriesService.RESOURCE_NOT_FOUND_MSG] = 404;
 respCodes[seriesService.RESOURCE_CREATED_MSG] = 201;
 respCodes[seriesService.RESOURCE_CONFLICT_MSG] = 409;

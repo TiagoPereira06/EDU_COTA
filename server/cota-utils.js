@@ -10,6 +10,7 @@ const ES_URI = `http://${ES_HOST}:${ES_PORT}`;
 const API_URL_START = "https://api.themoviedb.org";
 const API_KEY = '0c9b2502c13f4dcc2217113f2adf3788';
 const LANGUAGE = 'en-US';
+const API_IMAGE_START = "https://image.tmdb.org/t/p/w500";
 
 const MOCHA_TIMEOUT = 10000000;
 
@@ -39,5 +40,6 @@ module.exports = {
     API_URL_START: API_URL_START,
     API_KEY: API_KEY,
     LANGUAGE: LANGUAGE,
+    API_IMAGE_START: API_IMAGE_START
 
 };
