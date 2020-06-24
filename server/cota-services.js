@@ -444,27 +444,34 @@ function createUser(username, password) {
 }
 
 function signIn(request) {
-//TODO : MOVE LOGIN FROM API TO SERVICES
-    /* const requestBody = request.body;
-     const username = requestBody.username;
-     const password = requestBody.password;
-     return auth.checkValidUser(username, password)
-         .then(foundUser => {
-             return userLogin(request, foundUser)
-                 .then(() => {
-                     return utils.success(
-                         `USER ${username} FOUND`,
-                         RESOURCE_FOUND_MSG,
-                     )
-                 })
-         }).catch(err => {
-             return errorInvoke(err, DB_ERROR_MSG);
-         })
- */
+    const requestBody = request.body;
+    const username = requestBody.username;
+    const password = requestBody.password;
+    return checkValidUser(username, password)
+        .then(foundUser => {
+            if (foundUser) {
+                return userLogin(request, foundUser)
+                    .then(() => {
+                        return utils.success(
+                            `User ${username} found`,
+                            RESOURCE_FOUND_MSG,
+                            username
+                        )
+                    })
+            } else {
+                return utils.error(
+                    `User ${username} not found`,
+                    RESOURCE_NOT_FOUND_MSG,
+                )
+            }
+        })
+        .catch(err => {
+            return errorInvoke(err, DB_ERROR_MSG);
+        })
 }
 
 function userLogin(req, user) {
-    /*return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         req.login(user, (err, result) => {
             if (err) {
                 reject(err);
@@ -472,31 +479,46 @@ function userLogin(req, user) {
                 resolve(result);
             }
         });
-    });*/
+    });
+}
+
+function checkValidUser(username, password) {
+    return getUserByName(username)
+        .then(response => {
+            if (response.data && response.data.password === password) {
+                return utils.success(
+                    `Correct credentials for ${username} `,
+                    RESOURCE_FOUND_MSG,
+                    response.data
+                )
+            } else {
+                return utils.error(
+                    `Invalid credentials for ${username}`,
+                    RESOURCE_UNAUTHORIZED_MSG,
+                )
+            }
+        }).catch((err) => {
+            return errorInvoke(err, DB_ERROR_MSG);
+        });
 }
 
 function getUser(request) {
-    /* return new Promise(((resolve, reject) => {
-         const user = request.isAuthenticated() && request.user.data;
-         if (user) {
-             return utils.success(
-                 `User ${user.username} found`,
-                 RESOURCE_FOUND_MSG,
-                 user.username
-             )
-         } else {
-             return utils.error(
-                 `User not found`,
-                 RESOURCE_NOT_FOUND_MSG
-             )
-         }
-     }))
-         .then(resolve => {
-             console.log("Hrllo");
-         })
-         .catch(errorInvoke => {
-             console.log("Hrllo");
-         });*/
+    return new Promise(((resolve, reject) => {
+        const user = request.isAuthenticated() && request.user.data;
+        if (user) {
+            resolve(utils.success(
+                `User ${user.username} found`,
+                RESOURCE_FOUND_MSG,
+                user.username
+            ))
+        } else {
+            reject({
+                detail: `User not found`,
+                short: RESOURCE_NOT_FOUND_MSG
+            })
+
+        }
+    }))
 }
 
 function errorInvoke(err, msg) {

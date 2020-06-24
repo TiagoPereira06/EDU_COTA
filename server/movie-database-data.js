@@ -10,8 +10,8 @@ function getPopularSeries(page) {
             if (hit.length) return hit.map(e => ({
                 "name": e.name,
                 "overview": e.overview,
-                "votes": e.vote_average * 10,
-                "poster" : util.API_IMAGE_START.concat(e.poster_path)
+                "votes_average": e.vote_average * 10,
+                "poster_path" : util.API_IMAGE_START.concat(e.poster_path)
             }));
             return undefined;
         })

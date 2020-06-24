@@ -11,7 +11,7 @@ function userToRef(user, done) {
 }
 
 function refToUser(userRef, done) {
-    services.getUserByName(userRef.username)
+    services.getUserByName(userRef.data.username)
         .then(user => {
             done(null, user)
         })
@@ -32,18 +32,5 @@ module.exports = {
 
         passport.serializeUser(userToRef);
         passport.deserializeUser(refToUser);
-    },
-
-    checkValidUser: (username, password) => {
-        return services.getUserByName(username)
-            .then(response => {
-                if (response.data && response.data.password === password) {
-                    return Promise.resolve(response.data);
-                } else {
-                    return Promise.reject('Invalid username or password.')
-                }
-            }).catch(() => {
-                return Promise.reject('Invalid username or password.')
-            });
     }
 }

@@ -1,6 +1,5 @@
 'use strict';
 const seriesService = require('./cota-services');
-const auth = require('./cota-auth');
 const respCodes = [];
 respCodes[seriesService.RESOURCE_FOUND_MSG] = 200;
 respCodes[seriesService.RESOURCE_UPDATED_MSG] = 200;
@@ -90,30 +89,10 @@ function getSeriesBetweenInterval(req, rsp) {
 }
 
 function signIn(req, rsp) {
-    const userInfo = req.body;
-    const username = userInfo.username;
-    const password = userInfo.password;
-    /*seriesService.signIn(req)
-        .then(signInResponse => {
-            console.log(signInResponse);
-        })*/
-    auth.checkValidUser(username, password)
-        .then(user => userLogin(req, user))
-        .then(() => rsp.json({user: username}))
-        .catch(err => rsp.status(401).send({error: err}));
-}
-
-function userLogin(req, user) {
-    return new Promise((resolve, reject) => {
-        req.login(user, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-
+    delegateTask(
+        seriesService.signIn(req),
+        rsp
+    )
 }
 
 function logout(req, rsp) {
@@ -124,17 +103,10 @@ function logout(req, rsp) {
 function getUser(req, rsp) {
     //TODO : MOVE TO SERVICES
 
-    /*    delegateTask(
-            seriesService.getUser(req),
-            rsp
-        )*/
-
-    const user = req.isAuthenticated() && req.user.data;
-    if (user) {
-        rsp.json({user: user.username});
-    } else {
-        rsp.status(404).send();
-    }
+    delegateTask(
+        seriesService.getUser(req),
+        rsp
+    )
 }
 
 function signUp(req, rsp) {
