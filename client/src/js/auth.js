@@ -1,22 +1,20 @@
 const api = require('./cota-api.js');
 
-const global = require('./global.js');
 
 const Handlebars = require('handlebars');
 
 const loggedInTemplate =
     Handlebars.compile(`	
 		<span class='userInfo'>
-			User: {{this}} | 
-			<a href="#account">My Account</a> |
-			<a href='#logout'>Logout</a>
+			<a href="#account" style="padding:25px;  color: #ffffff"><i class="fas fa-user"></i> {{this}}</a>
+			<a href='#logout'><button class="btn btn-danger" type="button"><i class="fas fa-sign-out-alt"></i> Log Out</button></a>
 		</span>
 	`);
 
 const loggedOut = `
 		<span class='userInfo'>
-			<a href='#signUp'>Sign Up</a> | 
-			<a href='#signIn'>Sign In</a>
+			<a href='#signIn' style="padding: 25px;color: #ffffff;">Sign In</a>
+			<a href='#signUp'<button class="btn btn-primary" type="button">Sign Up</button></a>
 		</span>
 	`;
 
@@ -30,11 +28,6 @@ function setCurrentUser(username) {
         loggedOut;
 }
 
-function checkIfIsEmpty(value, tag) {
-    if (value.length === 0) {
-        alert(`${tag} is empty.`);
-    }
-}
 
 module.exports = {
 
@@ -43,7 +36,11 @@ module.exports = {
         userInfoBox = userInfo;
         return api.getUser()
             .then(userResponse => {
-                setCurrentUser(userResponse.user);
+                if (userResponse.success) {
+                    setCurrentUser(userResponse.success.data);
+                } else {
+                    setCurrentUser(null);
+                }
             })
             .catch(() => {
                 setCurrentUser(null);
@@ -55,16 +52,18 @@ module.exports = {
 
     signIn: {
         getView: () => `
-			<h1><img src='${global.logo}'>Sign In</h1>
+			<h1>Sign In</h1>
 
 
-			<div>
-				<label for='txtUsername'>Username: </label>
-				<input type='text' id='txtUsername'><br>
-				<label for='txtPassword'>Password : </label>
-				<input type='password' id='txtPassword'><br>
-				<input type='button' id='butSignIn' value='Sign In'>
-			</div>
+			<form class= "col-lg-6 offset-lg-3">
+			    <div class="form-group">
+				    <label for='txtUsername'>Username: </label>
+				    <input type='text' class="form-control" id='txtUsername' placeholder="Enter Username" required><br>
+				    <label for='txtPassword'>Password : </label>
+				    <input type='password' class="form-control" id='txtPassword' placeholder="Enter Password" required><br>
+				    <button type="submit" class="btn btn-primary" id='butSignIn'>Sign In</button>
+			    </div>
+			</form>
 		`,
 
         run: (req) => {
@@ -78,26 +77,28 @@ module.exports = {
                     alert('Username is empty.');
                     return;
                 }
-                //checkIfIsEmpty(username, "Username");
                 const password = txtPassword.value;
-                //checkIfIsEmpty(password, "Username");
                 if (password.length === 0) {
                     alert('Password is empty.');
                     return;
                 }
-                api.signIn(username, password)
+                return api.signIn(username, password)
                     .then(loginResponse => {
-                        if (loginResponse.user) {
-                            alert(`Welcome ${loginResponse.user}`);
-                            setCurrentUser(loginResponse.user);
+                        if (loginResponse.success) {
+                            alert(`Welcome ${loginResponse.success.data}`);
+                            setCurrentUser(loginResponse.success.data);
+                            /*
+                            const navbar = document.querySelector('#navBarLinks');
+                            navbar.innerHTML += '<a href=\'#publicGroups\' class="nav-item nav-link" >Shared Groups</a>';
+                            */
                             location.assign(`#${(req.args && req.args[0]) || 'home'}`);
-                        } else return Promise.reject(loginResponse);
+                        } else return Promise.reject(loginResponse.error.detail);
 
                     }).catch(error => {
-                    alert(error.error);
-                    txtUsername.value = "";
-                    txtPassword.value = "";
-                })
+                        alert(error);
+                        txtUsername.value = "";
+                        txtPassword.value = "";
+                    })
 
             }
         }
@@ -105,16 +106,17 @@ module.exports = {
 
     signUp: {
         getView: () => `
-			<h1><img src='${global.logo}'>Sign Up</h1>
+			<h1>Sign Up</h1>
 
-
-			<div>
-				<label for='txtUsername'>Username: </label>
-				<input type='text' id='txtUsername'><br>
-				<label for='txtPassword'>Password : </label>
-				<input type='password' id='txtPassword'><br>
-				<input type='button' id='butSignUp' value='Sign Up'>
-			</div>
+			<form class= "col-lg-6 offset-lg-3">
+			    <div class="form-group">
+				    <label for='txtUsername'>Username: </label>
+				    <input type='text' class="form-control" id='txtUsername' placeholder="Enter Username" required><br>
+				    <label for='txtPassword'>Password : </label>
+				    <input type='password' class="form-control" id='txtPassword' placeholder="Enter Password" required><br>
+				    <button type="submit" class="btn btn-primary" id='butSignUp'>Sign Up</button>
+			    </div>
+			</form>
 		`,
 
         run: (req) => {
@@ -134,14 +136,16 @@ module.exports = {
                     return;
                 }
 
-                api.signUp(username, password)
+                return api.signUp(username, password)
                     .then(response => {
                         if (response.success) {
                             api.signIn(username, password)
                                 .then(loginResponse => {
-                                    setCurrentUser(loginResponse.user);
-                                    alert(`Thanks ${username} for joining Chelas `);
-                                    location.assign(`#${(req.args && req.args[0]) || 'home'}`);
+                                    if (loginResponse.success) {
+                                        setCurrentUser(loginResponse.success.user);
+                                        alert(`Thanks ${username} for joining Chelas `);
+                                        location.assign(`#${(req.args && req.args[0]) || 'home'}`);
+                                    }
                                 })
                         } else {
                             return Promise.reject(response.error.detail)

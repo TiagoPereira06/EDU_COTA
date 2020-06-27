@@ -5,13 +5,14 @@
   "main": "webpack.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build" : "webpack",
-    "watch" : "webpack --watch"
+    "build": "webpack",
+    "watch": "webpack --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.0",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
@@ -20,6 +21,9 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "handlebars": "^4.7.6"
+    "bootstrap": "^4.5.0",
+    "handlebars": "^4.7.6",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1"
   }
 }

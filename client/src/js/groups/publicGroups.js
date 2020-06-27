@@ -1,11 +1,11 @@
-const global = require('./global.js');
-const api = require('./cota-api.js');
-const auth = require('./auth.js');
+const api = require('../cota-api.js');
+const auth = require('../auth.js');
+const global = require('../global.js');
 
-const Handlebars = require('handlebars');
+const handlebars = global.handlebars;
 
 const modListContentsTemplate =
-    Handlebars.compile(`
+    handlebars.compile(`
         <ul class="groups_list">
             {{#this}}
                 <h3>{{name}}</h3>
@@ -27,22 +27,28 @@ const modListContentsTemplate =
 
 module.exports = {
     getView: () => {
-        let currentUser = auth.getCurrentUser();
         return `
-		<h1><img src='${global.logo}'>${currentUser}'s Groups</h1>
+		<h1>Public Groups</h1>
 
 		<div id='allgroups'></div>	
 	`
     },
-    authenticationRequired : true,
+    authenticationRequired: false,
     run: () => {
         const itemsContainer = document.querySelector('#allgroups');
+/*
+        const alertContainer = document.querySelector('#alertContainer');
+*/
 
-        api.getGroups()
-            .then(allGroups => {
-                    if (allGroups.success)
-                        itemsContainer.innerHTML = modListContentsTemplate(allGroups.success.data)
+
+        api.getAllPublicGroups()
+            .then(publicGroups => {
+                    if (publicGroups.success) {
+                        itemsContainer.innerHTML = modListContentsTemplate(publicGroups.success.data);
+                    } else {
+                        itemsContainer.innerHTML = global.errorTemplate("You Must Be Logged In");
+                    }
                 }
-            );
+            )
     }
 }

@@ -1,57 +1,93 @@
 .navbar {
-	display: flex;
+    display: flex;
 }
 
 .navigation {
-	flex: 3;
+    flex: 3;
 }
 
 #userInfo {
-	flex: 1;
+    flex: 1;
 }
 
 .userInfo {
-	float: right;
+    float: right;
 }
 
 .navButtons {
-	text-align: center;
+    text-align: center;
 }
 
-.navitem{
-	display:inline-block;
+.navitem {
+    display: inline-block;
+    margin: 20px;
 }
 
-.navButton{
-	background-color: #dcc435;
-	border: none;
-	color: black;
-	padding: 15px 32px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 25px;
-	margin-left: 35px;
+.featuresIcon {
+    text-align: center;
+    font-size: 4em;
+    margin: 5% auto;
 }
 
 .homeItems {
-	text-align: center;
+    text-align: center;
 }
 
 h1 img {
-	display: block;
-	margin-bottom: 20px;
-	height: 80px;
-	vertical-align: after-edge;
+    display: block;
+    margin-bottom: 20px;
+    height: 80px;
+    vertical-align: after-edge;
+}
+
+h1 {
+    text-align: center;
+    padding-bottom: 25px;
+    padding-top: 15px;
 }
 
 .homeImage {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	height: 80px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 80px;
 }
 
 input {
-	margin: 5px;
+    margin: 5px;
+}
+
+.cardList {
+    margin: 30px;
+}
+
+.btn-circle.btn-sm {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0;
+    border-radius: 15px;
+    font-size: 8px;
+    text-align: center;
+}
+
+.footerIcon {
+    text-align: center;
+    font-size: 2em;
+    margin: 5% auto;
+}
+
+.footerItem {
+    margin: 10px 10px 20px;
+}
+
+.alertDiv {
+    position: fixed;
+    text-align: center;
+    right: 0;
+    top: 0;
+}
+
+a.custom-card,
+a.custom-card:hover {
+    color: inherit;
 }

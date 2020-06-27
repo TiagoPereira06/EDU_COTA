@@ -93,13 +93,47 @@ function signUp(username, password) {
         });
 }
 
+function createGroup(name, description, visibility) {
+    return fetch('/groups', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+            'name': name,
+            'desc': description,
+            'visibility': visibility,
+        })
+    })
+        .then(response => {
+            return response.json()
+        });
+}
+
+function addSeriesToGroup(groupName, seriesName) {
+    return fetch(`/groups/${groupName}/series`, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+            'series': seriesName,
+        })
+    })
+        .then(response => {
+            return response.json()
+        });
+}
+
 module.exports = {
     getPopularSeries: getPopularSeries,
     getSeriesWithName: getSeriesWithName,
     getAllPublicGroups: getAllPublicGroups,
     getGroups: getGroups,
     getSharedGroups: getSharedGroups,
+    addSeriesToGroup : addSeriesToGroup,
     getGroupByName: getGroupByName,
+    createGroup: createGroup,
     signIn: signIn,
     signUp: signUp,
     logout: logout,

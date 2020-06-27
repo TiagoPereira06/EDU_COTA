@@ -101,8 +101,6 @@ function logout(req, rsp) {
 }
 
 function getUser(req, rsp) {
-    //TODO : MOVE TO SERVICES
-
     delegateTask(
         seriesService.getUser(req),
         rsp

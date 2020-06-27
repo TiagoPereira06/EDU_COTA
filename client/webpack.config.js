@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
 
     mode: 'development',
-    entry: "./src/index.js",
+    entry: "./src/js/index.js",
     output: {
         filename: "main.js",
         path: path.resolve(__dirname,"dist"),
@@ -12,7 +12,8 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'COTA'
+            title: 'COTa',
+            favicon: "./src/images/old-woman.png"
         })
     ],
 
@@ -23,9 +24,12 @@ module.exports = {
                 use: ['style-loader', 'css-loader']
             },
             {
-                test: /\.(png|gif|jpe?g)$/i,
+                test: /\.(png|gif|jpe?g|ico)$/i,
                 use: ['file-loader']
-            }
-        ]
+            },
+            { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
+            { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader" },
+        ],
+
     }
 }
