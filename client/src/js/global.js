@@ -13,7 +13,7 @@ handlebars.registerHelper('groupVis', (visibility) => {
 });
 
 handlebars.registerHelper('count', (array) => {
-    return `<span class="badge badge-light text-center">${array.length}</span><br>`;
+    return `${array.length}`;
 });
 
 handlebars.registerHelper('checkDup', (group, name) => {

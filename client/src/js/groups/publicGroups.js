@@ -6,23 +6,27 @@ const handlebars = global.handlebars;
 
 const modListContentsTemplate =
     handlebars.compile(`
-        <ul class="groups_list">
+        <div class="m-3">
             {{#this}}
-                <h3>{{name}}</h3>
-                <p>Description : {{desc}}</p>
-                <p>Visibility : {{visibility}}</p>
-                    <p><b>Series :</b></p>
+        <div class="card text-center">
+        <div class="card-header bg-primary">
+        {{name}}
+        </div>
+        <div class="card-body text-center">
+                <p class="card-text">{{desc}}</p>
+                    <ul class="list-group list-group-flush">
                     {{#series}}
-                    <ul>
-                    <b>{{name}}</b>
-                    <li>Overview : {{overview}}</li>
-                    <li>Votes : {{vote_average}}</li>
-                    </ul>
-                    <br>
+                    <li class="list-group-item">{{name}}<p><i class="far fa-star"></i>{{vote_average}}</p></li>             
                 {{/series}}
-                <br>
+                </ul>
+                </div>
+                <div class="card-footer text-muted">
+                <i class="fas fa-user"></i> {{./owner}}
+                </div>
+                </div>
             {{/this}}
-        </ul>
+        
+        </div>
 `);
 
 module.exports = {
@@ -33,20 +37,23 @@ module.exports = {
 		<div id='allgroups'></div>	
 	`
     },
-    authenticationRequired: false,
+    authenticationRequired: true,
     run: () => {
         const itemsContainer = document.querySelector('#allgroups');
-/*
-        const alertContainer = document.querySelector('#alertContainer');
-*/
-
+        /*
+                const alertContainer = document.querySelector('#alertContainer');
+        */
+        const user = auth.getCurrentUser();
 
         api.getAllPublicGroups()
             .then(publicGroups => {
                     if (publicGroups.success) {
-                        itemsContainer.innerHTML = modListContentsTemplate(publicGroups.success.data);
-                    } else {
-                        itemsContainer.innerHTML = global.errorTemplate("You Must Be Logged In");
+                        const groups = publicGroups.success.data.filter((group) => group.owner !== user);
+                        if (!groups.length) {
+                            itemsContainer.innerHTML = global.noResultsTemplate();
+                        } else {
+                            itemsContainer.innerHTML = modListContentsTemplate(groups);
+                        }
                     }
                 }
             )

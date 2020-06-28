@@ -56,7 +56,7 @@ window.onload = () => {
                   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                      <div class="navbar-nav" id="navBarLinks">
                         <a href='#mostPopular' class="nav-item nav-link" >MostPopular</a>		
-                        <a href='#publicGroups' class="nav-item nav-link" >Shared Groups</a>	
+                        <a href='#publicGroups' class="nav-item nav-link" >Public Groups</a>	
                         <div class="form-inline">
                            <input  id="searchForm" class="form-control mr-sm-2" type="search" placeholder="Search">
                            <button id="searchButton" class="btn btn-primary"><i class="fas fa-search"></i></button>

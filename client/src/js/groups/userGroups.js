@@ -18,10 +18,12 @@ const modListContentsTemplate =
                 </div>
                 <div class="card-body text-center">
                 <p class="card-text">{{desc}}</p>
-                {{{count series}}}
                 <a href="#group/{{path name}}">
                 <button type="button" class="btn btn-primary mt-2 mb-1"><i class="fas fa-tv"></i> Shows</button>
                 </a>
+                </div>
+                <div class="card-footer text-muted">
+                {{{count series}}}
                 </div>
             </div>
             {{/this}}
