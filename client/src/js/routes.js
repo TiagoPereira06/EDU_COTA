@@ -8,6 +8,7 @@ module.exports = {
     account : require('./userAccount.js'),
     publicGroups : require('./groups/publicGroups'),
     group : require('./groups/groupDetails'),
+    editGroup : require('./groups/editGroup'),
     addToGroup : require('./groups/addSeriesToGroup'),
     signUp :auth.signUp,
     signIn  : auth.signIn,

@@ -6,20 +6,24 @@ const handlebars = global.handlebars;
 
 const modListContentsTemplate =
     handlebars.compile(`
-            <div class="card-columns card-userGroup m-3 text-center">
+            <div class="card-columns card-userGroup m-3">
             {{#this}}
-            <a href="#group/{{path name}}" class="custom-card">
             <div class="card text-center">
                 <div class="card-header bg-primary">
                 {{name}}
                 {{{groupVis visibility}}}
-                {{{count series}}}
+                <a href="#editGroup/{{name}}" class="float-left text-dark">
+                <i class="far fa-edit"></i>
+                </a>
                 </div>
-                <div class="card-body">
+                <div class="card-body text-center">
                 <p class="card-text">{{desc}}</p>
+                {{{count series}}}
+                <a href="#group/{{path name}}">
+                <button type="button" class="btn btn-primary mt-2 mb-1"><i class="fas fa-tv"></i> Shows</button>
+                </a>
                 </div>
             </div>
-            </a>
             {{/this}}
             </div>
 `);

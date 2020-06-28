@@ -1,13 +1,6 @@
 const api = require('../cota-api.js');
 const global = require('../global');
 
-
-global.handlebars.compile(
-    `
-    <div class="alert alert-success m-5" role="alert">
-    {{this}}
-</div>
-`);
 module.exports = {
     getView: () => {
         return `

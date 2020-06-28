@@ -125,13 +125,43 @@ function addSeriesToGroup(groupName, seriesName) {
         });
 }
 
+function editGroup(oldGroupName, newGroupName, newGroupDesc) {
+    return fetch(`/groups/${oldGroupName}/`, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+            'name': newGroupName,
+            'desc': newGroupDesc
+        })
+    })
+        .then(response => {
+            return response.json()
+        });
+}
+
+function deleteSeriesFromGroup(group, series) {
+    return fetch(`/groups/${group}/series/${series}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-type': 'application/json',
+        }
+    })
+        .then(response => {
+            return response.json()
+        });
+}
+
 module.exports = {
     getPopularSeries: getPopularSeries,
     getSeriesWithName: getSeriesWithName,
     getAllPublicGroups: getAllPublicGroups,
     getGroups: getGroups,
     getSharedGroups: getSharedGroups,
-    addSeriesToGroup : addSeriesToGroup,
+    deleteSeriesFromGroup: deleteSeriesFromGroup,
+    editGroup: editGroup,
+    addSeriesToGroup: addSeriesToGroup,
     getGroupByName: getGroupByName,
     createGroup: createGroup,
     signIn: signIn,

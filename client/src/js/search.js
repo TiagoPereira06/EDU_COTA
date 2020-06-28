@@ -4,7 +4,7 @@ const api = require('./cota-api.js');
 const handlebars = global.handlebars;
 
 const modListContentsTemplate =
-    handlebars.compile(global.seriesGroupTemplate("this"));
+    handlebars.compile(global.seriesGroupTemplate());
 
 module.exports = {
     getView: () => `
@@ -22,25 +22,21 @@ module.exports = {
                     if (seriesResult.success) {
                         api.getGroups()
                             .then((allGroups) => {
-                                    const result = seriesResult.success.data;
-                                    if (allGroups.success) {
-                                        let groups = allGroups.success.data;
-                                        groups = groups.sort((a, b) => (a.visibility > b.visibility) ? 1 : -1)
-                                        result.forEach((series) => {
-                                            series.groups = groups;
-                                        })
-                                        itemsContainer.innerHTML = modListContentsTemplate(seriesResult.success.data);
-                                    } else {
-                                        result.forEach((series) => {
-                                            series.groups = [];
-                                        })
-                                        itemsContainer.innerHTML = modListContentsTemplate(seriesResult.success.data);
-                                    }
+                                if (allGroups.success) {
+                                    let groups = allGroups.success.data;
+                                    groups = groups.sort((a, b) => (a.visibility > b.visibility) ? 1 : -1)
+                                    itemsContainer.innerHTML = modListContentsTemplate({
+                                        series : seriesResult.success.data,
+                                        groups : groups
+                                    });
                                 }
-                            )
+
+                            })
+                    } else {
+                        itemsContainer.innerHTML = global.noResultsTemplate();
                     }
                 }
             )
-            .catch(() => itemsContainer.innerHTML = global.errorTemplate);
+            .catch((error) => itemsContainer.innerHTML = global.errorTemplate(error.detail));
     }
 }

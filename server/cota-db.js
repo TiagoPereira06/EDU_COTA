@@ -115,8 +115,8 @@ function updateGroup(oldName, newName, newDesc, owner) {
         },
         body: JSON.stringify({
             "query": {
-                "dis_max": {
-                    "queries": [
+                "bool": {
+                    "must": [
                         {
                             "match": {
                                 "owner": `${owner}`
@@ -205,22 +205,22 @@ function deleteSeriesFromGroup(groupName, seriesIndex, owner) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                    "query": {
-                        "dis_max": {
-                            "queries": [
-                                {
-                                    "match": {
-                                        "owner": `${owner}`
-                                    }
-                                },
-                                {
-                                    "match": {
-                                        "name": `${groupName}`
-                                    }
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "owner": `${owner}`
                                 }
-                            ]
-                        }
-                    },
+                            },
+                            {
+                                "match": {
+                                    "name": `${groupName}`
+                                }
+                            }
+                        ]
+                    }
+                },
                     "script": {
                         "lang": "painless",
                         "inline": "ctx._source.series.remove(params.deleteSeries)",

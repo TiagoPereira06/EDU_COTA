@@ -11,7 +11,7 @@ const modListContentsTemplate =
           <img class="card-img-top img-fluid" src="{{poster_path}}" alt="Card image cap">
           <div class="card-body text-center">
              <h5 class="card-title">{{name}}</h5>
-                <button type="button" onclick="sayHello()" class="btn btn-danger mt-4 mb-2" aria-haspopup="true" aria-expanded="false">
+                <button type="button" onclick="{{delSeriesFromGroup name ../groupName}}" class="btn btn-danger mt-4 mb-2" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-trash-alt"></i> Remove
                 </button>
              </div>
@@ -40,7 +40,10 @@ module.exports = {
             .then(group => {
                     if (group.success) {
                         if (group.success.data.series.length) {
-                            itemsContainer.innerHTML = modListContentsTemplate(group.success.data);
+                            itemsContainer.innerHTML = modListContentsTemplate({
+                                series : group.success.data.series,
+                                groupName : name
+                            });
                         } else {
                             itemsContainer.innerHTML = global.noResultsTemplate("This Group is Empty")
                         }

@@ -13,7 +13,7 @@ handlebars.registerHelper('groupVis', (visibility) => {
 });
 
 handlebars.registerHelper('count', (array) => {
-    return `<span class="badge badge-light float-left">${array.length}</span>`;
+    return `<span class="badge badge-light text-center">${array.length}</span><br>`;
 });
 
 handlebars.registerHelper('checkDup', (group, name) => {
@@ -23,14 +23,28 @@ handlebars.registerHelper('checkDup', (group, name) => {
     }
 });
 
+handlebars.registerHelper('delSeriesFromGroup', (series, groupName) => {
+       /* return `console.log("${series} -> ${groupName}")`*/
+   /* return `this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+    return api.deleteSeriesFromGroup("${groupName}", "${series}")
+        .then((response) => {
+            if(response.success){
+                this.innerHTML = "";
+            }
+        })
+        `*/
+    /*return `myFunction("${series}", "${groupName}")`*/
+});
+
+
 
 function formatName(name) {
     return name.replaceAll("%20", " ");
 }
 
-function seriesGroupTemplate(arrayName) {
+function seriesGroupTemplate() {
     return `<div class="card-columns card-popular m-3">
-       {{#each ${arrayName}}}
+       {{#each series}}
        <div class="card">
           <img class="card-img-top img-fluid" src="{{poster_path}}" alt="Card image cap">
           <div class="card-body text-center">
@@ -39,14 +53,14 @@ function seriesGroupTemplate(arrayName) {
              <div class="progress">
                 <div class="progress-bar bg-primary" role="progressbar" style="width: {{votes_average}}%">{{votes_average}}</div>
              </div>
-             {{#if groups}}
+             {{#if ../groups}}
              <div class="dropdown mt-4 mb-2">
                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-plus"></i> Add
                 </button>
                 <div class="dropdown-menu">
                 <h6 class="dropdown-header">Groups</h6>
-                   {{#each groups}}
+                   {{#each ../groups}}
                    <a class="dropdown-item {{checkDup this ../name}}" href=#addToGroup/{{path name}}/{{path ../name}}>{{{groupVis visibility}}} {{name}}</a>
                    {{/each}}
                 </div>
@@ -64,17 +78,12 @@ module.exports = {
         if (msg) {
             return `
                 <div class="alert alert-danger m-5 text-center" role="alert">
-                <!--<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>-->
                 ${msg}
                 </div>
                 	`
         } else {
             return `
                 <div class="alert alert-danger m-5 text-center" role="alert">
-                <!--<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>-->
                 Something Went Wrong - Check Your Connection
                 </div>
                 	`

@@ -323,13 +323,13 @@ function deleteSeriesFromGroup(request) {
     const groupName = request.params.groupName;
     const seriesName = request.params.seriesName;
 
-    if (!req.isAuthenticated()) {
+    if (!request.isAuthenticated()) {
         return utils.error(
             `YOU MUST BE LOGGED IN`,
             RESOURCE_UNAUTHORIZED_MSG
         )
     } else {
-        const owner = req.user.data.username;
+        const owner = request.user.data.username;
         return db.getGroupByName(groupName, owner)
             .then(group => {
                     if (group) {

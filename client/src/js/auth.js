@@ -55,7 +55,7 @@ module.exports = {
 			<h1>Sign In</h1>
 
 
-			<form class= "col-lg-6 offset-lg-3">
+			<div class= "col-lg-6 offset-lg-3">
 			    <div class="form-group">
 				    <label for='txtUsername'>Username: </label>
 				    <input type='text' class="form-control" id='txtUsername' placeholder="Enter Username" required><br>
@@ -63,15 +63,16 @@ module.exports = {
 				    <input type='password' class="form-control" id='txtPassword' placeholder="Enter Password" required><br>
 				    <button type="submit" class="btn btn-primary" id='butSignIn'>Sign In</button>
 			    </div>
-			</form>
+			</div>
 		`,
 
         run: (req) => {
+            const buttonText = 'Sign In';
             const txtUsername = document.querySelector('#txtUsername');
             const txtPassword = document.querySelector('#txtPassword');
-            const butLogin = document.querySelector('#butSignIn');
+            const butSignIn = document.querySelector('#butSignIn');
 
-            butLogin.onclick = () => {
+            butSignIn.onclick = () => {
                 const username = txtUsername.value;
                 if (username.length === 0) {
                     alert('Username is empty.');
@@ -82,6 +83,9 @@ module.exports = {
                     alert('Password is empty.');
                     return;
                 }
+
+                butSignIn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${butSignIn.innerHTML}`
+
                 return api.signIn(username, password)
                     .then(loginResponse => {
                         if (loginResponse.success) {
@@ -98,6 +102,7 @@ module.exports = {
                         alert(error);
                         txtUsername.value = "";
                         txtPassword.value = "";
+                        butSignIn.innerHTML = buttonText;
                     })
 
             }
@@ -108,7 +113,7 @@ module.exports = {
         getView: () => `
 			<h1>Sign Up</h1>
 
-			<form class= "col-lg-6 offset-lg-3">
+			<div class= "col-lg-6 offset-lg-3">
 			    <div class="form-group">
 				    <label for='txtUsername'>Username: </label>
 				    <input type='text' class="form-control" id='txtUsername' placeholder="Enter Username" required><br>
@@ -116,15 +121,16 @@ module.exports = {
 				    <input type='password' class="form-control" id='txtPassword' placeholder="Enter Password" required><br>
 				    <button type="submit" class="btn btn-primary" id='butSignUp'>Sign Up</button>
 			    </div>
-			</form>
+			</div>
 		`,
 
         run: (req) => {
+            const buttonText = 'Sign Up';
             const txtUsername = document.querySelector('#txtUsername');
             const txtPassword = document.querySelector('#txtPassword');
-            const butLogin = document.querySelector('#butSignUp');
+            const butSignUp = document.querySelector('#butSignUp');
 
-            butLogin.onclick = () => {
+            butSignUp.onclick = () => {
                 const username = txtUsername.value;
                 if (username.length === 0) {
                     alert('Username is empty.');
@@ -135,6 +141,8 @@ module.exports = {
                     alert('Password is empty.');
                     return;
                 }
+
+                butSignUp.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${butSignUp.innerHTML}`
 
                 return api.signUp(username, password)
                     .then(response => {
@@ -155,6 +163,7 @@ module.exports = {
                         alert(errorMsg);
                         txtUsername.value = "";
                         txtPassword.value = "";
+                        butSignUp.innerHTML = buttonText;
                     })
 
             }

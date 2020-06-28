@@ -6,7 +6,7 @@ const handlebars = global.handlebars;
 
 let modListContentsTemplate =
     handlebars.compile(`
-   ${global.seriesGroupTemplate("series")}
+   ${global.seriesGroupTemplate()}
     <br>
     <div class='navButtons mx-auto'>
        <button id="prevButton" class="navitem btn btn-primary btn-lg">Prev</button>
@@ -21,23 +21,18 @@ function getSeries(pageCounter, itemsContainer) {
                 if (popularSeries.success)
                     return api.getGroups()
                         .then((allGroups) => {
-                                const series = popularSeries.success.data;
                                 if (allGroups.success) {
                                     let groups = allGroups.success.data;
                                     groups = groups.sort((a, b) => (a.visibility > b.visibility) ? 1 : -1)
-                                    series.forEach((series) => {
-                                        series.groups = groups;
-                                    })
                                     itemsContainer.innerHTML = modListContentsTemplate({
                                         series: popularSeries.success.data,
+                                        groups : groups,
                                         pageCount: pageCounter
                                     });
                                 } else {
-                                    series.forEach((series) => {
-                                        series.groups = [];
-                                    })
                                     itemsContainer.innerHTML = modListContentsTemplate({
                                         series: popularSeries.success.data,
+                                        groups : [],
                                         pageCount: pageCounter,
                                     });
                                 }
