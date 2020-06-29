@@ -26,8 +26,13 @@ module.exports = {
                                     let groups = allGroups.success.data;
                                     groups = groups.sort((a, b) => (a.visibility > b.visibility) ? 1 : -1)
                                     itemsContainer.innerHTML = modListContentsTemplate({
-                                        series : seriesResult.success.data,
-                                        groups : groups
+                                        series: seriesResult.success.data,
+                                        groups: groups
+                                    });
+                                } else {
+                                    itemsContainer.innerHTML = modListContentsTemplate({
+                                        series: seriesResult.success.data,
+                                        groups: []
                                     });
                                 }
 
