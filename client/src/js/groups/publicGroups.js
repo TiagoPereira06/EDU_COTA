@@ -13,7 +13,7 @@ const modListContentsTemplate =
         {{name}}
         </div>
         <div class="card-body text-center">
-                <p class="card-text">{{desc}}</p>
+                <p class="card-text"><em>{{desc}}</em></p>
                     <ul class="list-group list-group-flush">
                     {{#series}}
                     <li class="list-group-item">{{name}}<p><i class="far fa-star"></i>{{vote_average}}</p></li>             

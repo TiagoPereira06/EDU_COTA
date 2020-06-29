@@ -17,9 +17,9 @@ const modListContentsTemplate =
                 </a>
                 </div>
                 <div class="card-body text-center">
-                <p class="card-text">{{desc}}</p>
+                <p class="card-text"><em>{{desc}}</em></p>
                 <a href="#group/{{path name}}">
-                <button type="button" class="btn btn-primary mt-2 mb-1"><i class="fas fa-tv"></i> Shows</button>
+                <button type="button" class="btn btn-primary mt-2 mb-1" {{checkEmpty series}}><i class="fas fa-tv"></i> Shows</button>
                 </a>
                 </div>
                 <div class="card-footer text-muted">
@@ -37,7 +37,7 @@ module.exports = {
 		<h1>${currentUser}'s Groups</h1>
 
 		<div id='groups'>
-		${global.spinner}
+		${global.spinnerTemplate}
         </div>	
 	`
     },

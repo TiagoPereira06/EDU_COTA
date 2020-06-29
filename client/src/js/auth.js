@@ -6,14 +6,14 @@ const Handlebars = require('handlebars');
 const loggedInTemplate =
     Handlebars.compile(`	
 		<span class='userInfo'>
-			<a href="#account" style="padding:25px;  color: #ffffff"><i class="fas fa-user"></i> {{this}}</a>
+			<a class="text-white p-4" href="#account"><i class="fas fa-user"></i> {{this}}</a>
 			<a href='#logout'><button class="btn btn-danger" type="button"><i class="fas fa-sign-out-alt"></i> Log Out</button></a>
 		</span>
 	`);
 
 const loggedOut = `
 		<span class='userInfo'>
-			<a href='#signIn' style="padding: 25px;color: #ffffff;">Sign In</a>
+			<a class="text-white p-4" href='#signIn'>Sign In</a>
 			<a href='#signUp'<button class="btn btn-primary" type="button">Sign Up</button></a>
 		</span>
 	`;
@@ -91,10 +91,6 @@ module.exports = {
                         if (loginResponse.success) {
                             alert(`Welcome ${loginResponse.success.data}`);
                             setCurrentUser(loginResponse.success.data);
-                            /*
-                            const navbar = document.querySelector('#navBarLinks');
-                            navbar.innerHTML += '<a href=\'#publicGroups\' class="nav-item nav-link" >Shared Groups</a>';
-                            */
                             location.assign(`#${(req.args && req.args[0]) || 'home'}`);
                         } else return Promise.reject(loginResponse.error.detail);
 
@@ -150,7 +146,7 @@ module.exports = {
                             api.signIn(username, password)
                                 .then(loginResponse => {
                                     if (loginResponse.success) {
-                                        setCurrentUser(loginResponse.success.user);
+                                        setCurrentUser(loginResponse.success.data);
                                         alert(`Thanks ${username} for joining Chelas `);
                                         location.assign(`#${(req.args && req.args[0]) || 'home'}`);
                                     }

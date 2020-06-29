@@ -123,8 +123,9 @@ module.exports = {
                     if (createResponse.success) {
                         alert(`New Group ${groupName} Created`)
                         run();
-                        //location.reload();
-                    } else return Promise.reject(createResponse);
+                    } else {
+                        return Promise.reject(createResponse);
+                    }
                 }).catch(rejected => {
                     alert(rejected.error.detail);
                 })

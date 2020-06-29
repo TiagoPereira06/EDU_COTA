@@ -71,7 +71,7 @@ module.exports = {
 		<h1>Most Popular TV Shows</h1>
 
 		<div id='mostpopular'>
-		${global.spinner}
+		${global.spinnerTemplate}
 		</div>	
 	`,
     authenticationRequired: false,

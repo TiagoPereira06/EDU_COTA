@@ -4,7 +4,6 @@ handlebars.registerHelper('path', (string) => {
 });
 
 handlebars.registerHelper('groupVis', (visibility) => {
-
     if (visibility === 'public') {
         return '<i class="fas fa-lock-open float-right"></i>'
     } else {
@@ -23,19 +22,11 @@ handlebars.registerHelper('checkDup', (group, name) => {
     }
 });
 
-handlebars.registerHelper('delSeriesFromGroup', (series, groupName) => {
-       /* return `console.log("${series} -> ${groupName}")`*/
-   /* return `this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
-    return api.deleteSeriesFromGroup("${groupName}", "${series}")
-        .then((response) => {
-            if(response.success){
-                this.innerHTML = "";
-            }
-        })
-        `*/
-    /*return `myFunction("${series}", "${groupName}")`*/
+handlebars.registerHelper('checkEmpty', (array) => {
+    if (!array.length) {
+        return 'disabled'
+    }
 });
-
 
 
 function formatName(name) {
@@ -61,7 +52,7 @@ function seriesGroupTemplate() {
                 <div class="dropdown-menu">
                 <h6 class="dropdown-header">Groups</h6>
                    {{#each ../groups}}
-                   <a class="dropdown-item {{checkDup this ../name}}" href=#addToGroup/{{path name}}/{{path ../name}}>{{{groupVis visibility}}} {{name}}</a>
+                   <a class="dropdown-item {{checkDup this ../name}}" href=#editGroupSeries/add/{{path name}}/{{path ../name}}>{{{groupVis visibility}}} {{name}}</a>
                    {{/each}}
                 </div>
              </div>
@@ -94,17 +85,12 @@ module.exports = {
             return `
                 <div class="alert alert-success m-5" role="alert">
                 ${msg}
-                <!--<button type="button" class="close float-right" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>-->
                 </div>
                 	`
         } else {
             return `
                 <div class="alert alert-success m-5" role="alert">
                 Operation Completed Successfully
-                <!--<button type="button" class="close float-right" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>-->
                 </div>
                 	`
         }
@@ -126,7 +112,7 @@ module.exports = {
     },
     handlebars: handlebars,
     formatName: formatName,
-    spinner: `
+    spinnerTemplate: `
 		    <div class="text-center">
 		    <div class="spinner-border text-primary m-5" style="width: 3rem; height: 3rem;" role="status">
             <span class="sr-only">Loading...</span>

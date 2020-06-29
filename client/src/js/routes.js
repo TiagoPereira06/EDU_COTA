@@ -9,7 +9,7 @@ module.exports = {
     publicGroups : require('./groups/publicGroups'),
     group : require('./groups/groupDetails'),
     editGroup : require('./groups/editGroup'),
-    addToGroup : require('./groups/addSeriesToGroup'),
+    editGroupSeries : require('./groups/addOrRemoveSeries'),
     signUp :auth.signUp,
     signIn  : auth.signIn,
     logout : auth.logout

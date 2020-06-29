@@ -44,7 +44,7 @@ module.exports = {
                 return;
             }
 
-            alertDiv.innerHTML = global.spinner;
+            alertDiv.innerHTML = global.spinnerTemplate;
 
             return api.editGroup(oldGroupName, name, desc)
                 .then(response => {
