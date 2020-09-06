@@ -8,4 +8,4 @@
 * Luis Guerra - 43755
 
 
-Check [Wiki](https://github.com/LuisGuerraa/PI-1920v-LI51D-G10/wiki) for API design details
+Check [Wiki](https://github.com/TiagoPereira06/EDU_Cota/wiki) for API design details
