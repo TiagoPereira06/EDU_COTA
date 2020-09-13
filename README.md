@@ -15,7 +15,7 @@
 
 ## **Requirements**
 
-Check [Requirements](https://github.com/isel-leic-pi/PI-1920v-LI51N/wiki/TrabalhoPr%C3%A1tico) at the Mobile Devices Programming Repository
+Check [Requirements](https://github.com/isel-leic-pi/PI-1920v-LI51N/wiki/TrabalhoPr%C3%A1tico) at the Internet Programming Repository
 
 Check [Wiki](https://github.com/TiagoPereira06/EDU_Cota/wiki) for API design details
 
